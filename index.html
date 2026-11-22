@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Majestique Colours Cricket League 2027 · Player Registration</title>
+<meta name="description" content="Player registration for Majestique Colours Cricket League 2027 — 6th & 7th February 2027. Free registration, player auction.">
+<meta property="og:title" content="Majestique Colours Cricket League 2027 — Player Registration">
+<meta property="og:description" content="6th & 7th Feb 2027 · Free registration · Register for the player auction">
+<meta property="og:image" content="assets/ccl-2027.webp">
+<meta name="theme-color" content="#1b3a8f">
+<link rel="icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="rainbow" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="presents">
+      <img src="assets/colours-logo.webp" alt="Colours — Colour your Dreams" width="150" height="98">
+      <span>presents</span>
+    </div>
+    <img class="badge" src="assets/ccl-2027.webp" alt="CCL 2027 logo" width="260" height="243">
+    <p class="kicker">🔥 Ab Khela Hoga… 🔥</p>
+    <h1>Majestique <span class="c-text">Colours</span> Cricket League <span class="yr">2027</span></h1>
+    <p class="tagline">“Jahan junoon hai, wahaan cricket ka rang hai” 😎</p>
+
+    <div class="facts">
+      <div class="fact"><span class="ico">📅</span><b>6th &amp; 7th Feb 2027</b><small>Saturday &amp; Sunday</small></div>
+      <div class="fact"><span class="ico">🔨</span><b>Player Auction</b><small>Register individually</small></div>
+      <div class="fact"><span class="ico">🆓</span><b>No Registration Fee</b><small>Free for everyone</small></div>
+    </div>
+
+    <ul class="hype" lang="hi">
+      <li>🔥 दो दिन का क्रिकेट धमाका</li>
+      <li>🏏 चौकों-छक्कों की बरसात</li>
+      <li>💪 जोश, जुनून और जबरदस्त मुकाबले</li>
+      <li>🏆 Ek hi maqsad… trophy apne naam!</li>
+    </ul>
+
+    <a class="cta" href="#register">Register now ↓</a>
+    <p class="countdown" id="countdown" aria-live="polite"></p>
+  </div>
+</header>
+
+<main id="register" class="wrap">
+  <section class="card" id="formCard">
+    <h2>Player Registration</h2>
+    <p class="sub">Fill this once per player. Fields marked <span class="req">*</span> are required. It takes about 2 minutes.</p>
+
+    <form id="regForm" novalidate>
+      <!-- spam trap: real people never see or fill this -->
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <fieldset>
+        <legend><span class="num">1</span> Your details</legend>
+        <div class="grid">
+          <label class="field full">Full name <span class="req">*</span>
+            <input name="name" autocomplete="name" maxlength="60" required placeholder="As it should appear on the scorecard">
+          </label>
+          <label class="field">WhatsApp number <span class="req">*</span>
+            <input name="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" pattern="[6-9][0-9]{9}" required placeholder="10-digit mobile">
+          </label>
+          <label class="field">Email
+            <input name="email" type="email" autocomplete="email" maxlength="80" placeholder="optional">
+          </label>
+          <div class="field">
+            <span class="lbl">Gender <span class="req">*</span></span>
+            <div class="chips" role="radiogroup">
+              <label class="chip"><input type="radio" name="gender" value="Male" required><span>Male</span></label>
+              <label class="chip"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+            </div>
+          </div>
+          <label class="field">Date of birth <span class="req">*</span>
+            <input name="dob" type="date" min="1945-01-01" max="2020-12-31" required>
+          </label>
+          <label class="field full">Area / locality <span class="req">*</span>
+            <input name="area" autocomplete="address-level2" maxlength="60" required placeholder="e.g. Kothrud, Pune">
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">2</span> Cricket profile</legend>
+        <div class="field">
+          <span class="lbl">Playing role <span class="req">*</span></span>
+          <div class="chips roles" role="radiogroup">
+            <label class="chip"><input type="radio" name="role" value="Batter" required><span>🏏 Batter</span></label>
+            <label class="chip"><input type="radio" name="role" value="Bowler"><span>🎯 Bowler</span></label>
+            <label class="chip"><input type="radio" name="role" value="All-rounder"><span>⚡ All-rounder</span></label>
+            <label class="chip"><input type="radio" name="role" value="Wicket-keeper"><span>🧤 Wicket-keeper</span></label>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <span class="lbl">Batting hand <span class="req">*</span></span>
+            <div class="chips" role="radiogroup">
+              <label class="chip"><input type="radio" name="batHand" value="Right" required><span>Right</span></label>
+              <label class="chip"><input type="radio" name="batHand" value="Left"><span>Left</span></label>
+            </div>
+          </div>
+          <label class="field">Bowling style
+            <select name="bowlStyle">
+              <option value="">— select —</option>
+              <option>Right-arm fast / medium</option>
+              <option>Left-arm fast / medium</option>
+              <option>Right-arm spin</option>
+              <option>Left-arm spin</option>
+              <option>Don't bowl</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">3</span> Jersey</legend>
+        <div class="grid">
+          <label class="field">Name on jersey <span class="req">*</span>
+            <input name="jerseyName" maxlength="12" autocapitalize="characters" required placeholder="Max 12 letters">
+          </label>
+          <label class="field">Jersey number <span class="req">*</span>
+            <input name="jerseyNo" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{1,2}" required placeholder="0 – 99">
+          </label>
+          <label class="field">T-shirt size <span class="req">*</span>
+            <select name="tshirt" required>
+              <option value="">— select —</option>
+              <option>XS</option><option>S</option><option>M</option><option>L</option>
+              <option>XL</option><option>XXL</option><option>3XL</option>
+            </select>
+          </label>
+        </div>
+        <div class="jersey-preview" aria-hidden="true">
+          <div class="shirt">
+            <span class="jn" id="pvName">YOUR NAME</span>
+            <span class="jno" id="pvNo">00</span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">4</span> Declaration</legend>
+        <ul class="rules">
+          <li>I am physically fit to play and will inform the organisers of any medical condition in advance.</li>
+          <li>All details in this form are true and complete.</li>
+          <li>I understand cricket carries a risk of injury and I take part at my own risk.</li>
+          <li>I will accept the auction result and play for the team that picks me.</li>
+          <li>I will follow the rules, the umpires' decisions and the organisers' instructions.</li>
+          <li>Photos and videos taken at the event may be used by the organisers.</li>
+        </ul>
+        <label class="agree">
+          <input type="checkbox" name="agree" value="Yes" required>
+          <span>I have read and agree to the above <span class="req">*</span></span>
+        </label>
+      </fieldset>
+
+      <p class="form-error" id="formError" role="alert" hidden></p>
+      <button type="submit" class="submit" id="submitBtn">Submit registration</button>
+      <p class="fine">No registration fee. Your details are only used for organising this league.</p>
+    </form>
+  </section>
+
+  <section class="card done" id="doneCard" hidden tabindex="-1">
+    <div class="tick" aria-hidden="true">✓</div>
+    <h2>You're in the auction pool! 🏆</h2>
+    <p>Thank you, <b id="doneName"></b>. Your registration is confirmed.</p>
+    <p class="regid">Registration ID<br><b id="doneId"></b></p>
+    <p class="sub">Take a screenshot of this page. The organisers will contact you on WhatsApp with auction details.</p>
+    <button type="button" class="link" id="againBtn">Register another player</button>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Colours</b> · Colour your Dreams</p>
+    <p class="tags">#MajestiqueCCL2027 #ColoursCricketLeague #CricketKaJunoon</p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
