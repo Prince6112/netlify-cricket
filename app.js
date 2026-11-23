@@ -43,13 +43,39 @@
     mLbl.textContent = on ? "Music on" : "Play music";
     mBtn.setAttribute("aria-label", on ? "Stop music" : "Play music");
   }
+  var MUSIC_KEY = "ccl27-music";
+  function musicPref(v) {
+    try { if (v) localStorage.setItem(MUSIC_KEY, v); return localStorage.getItem(MUSIC_KEY); } catch (e) { return null; }
+  }
+  function startMusic() {
+    audio.volume = 0.6;
+    var p = audio.play();
+    if (p && p.catch) p.catch(function () { musicUI(false); });
+  }
   mBtn.addEventListener("click", function () {
-    if (audio.paused) {
+    if (audio.paused) { musicPref("on"); startMusic(); }
+    else { musicPref("off"); audio.pause(); }
+  });
+
+  // Phones block sound until the visitor touches the page, so start the music on
+  // the first tap anywhere (unless they switched it off before). Also try right away:
+  // some desktop browsers allow it.
+  if (musicPref() !== "off") {
+    // events browsers accept as "the visitor did something" for allowing sound
+    var TAPS = ["click", "touchend", "pointerup", "mousedown", "keydown"];
+    var stopListening = function () { TAPS.forEach(function (t) { document.removeEventListener(t, firstTap, true); }); };
+    var firstTap = function (e) {
+      if (e.target.closest && e.target.closest("#musicBtn")) return stopListening(); // the button handles itself
+      if (!audio.paused || musicPref() === "off") return stopListening();
       audio.volume = 0.6;
       var p = audio.play();
-      if (p && p.catch) p.catch(function () { musicUI(false); });
-    } else audio.pause();
-  });
+      if (p && p.then) p.then(stopListening, function () { /* not allowed yet: try on the next tap */ });
+      else stopListening();
+    };
+    TAPS.forEach(function (t) { document.addEventListener(t, firstTap, true); });
+    var tryNow = audio.play();
+    if (tryNow && tryNow.catch) tryNow.catch(function () { /* blocked: waits for the first tap */ });
+  }
   audio.addEventListener("play", function () { musicUI(true); });
   audio.addEventListener("pause", function () { musicUI(false); });
 
