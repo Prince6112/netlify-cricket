@@ -20,6 +20,9 @@
 <div class="ticker" aria-label="Registered players">
   <span class="ticker-tag">LIVE</span>
   <div class="ticker-track"><div class="ticker-run" id="tickerRun"></div></div>
+  <button type="button" class="music" id="musicBtn" aria-pressed="false" aria-label="Play music">
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Music</span>
+  </button>
 </div>
 
 <header class="hero">
@@ -41,7 +44,7 @@
     <div class="facts">
       <div class="fact"><span class="ico">📅</span><b>6th &amp; 7th Feb 2027</b><small>Saturday &amp; Sunday</small></div>
       <div class="fact"><span class="ico">🔨</span><b>Player Auction</b><small>Register individually</small></div>
-      <div class="fact"><span class="ico">👥</span><b id="regCount">Players</b><small>registered so far</small></div>
+      <div class="fact"><span class="ico">👥</span><b id="regCount">Registrations open</b><small id="regCountSub">be the first!</small></div>
     </div>
 
     <ul class="hype" lang="hi">
@@ -55,10 +58,6 @@
     <p class="countdown" id="countdown" aria-live="polite"></p>
   </div>
 </header>
-
-<button type="button" class="music" id="musicBtn" aria-pressed="false" aria-label="Play music">
-  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Play music</span>
-</button>
 <audio id="anthem" src="assets/anthem.mp3" loop preload="none"></audio>
 
 <main id="register" class="wrap">

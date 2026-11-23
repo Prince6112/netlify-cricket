@@ -40,7 +40,7 @@
   function musicUI(on) {
     mBtn.classList.toggle("on", on);
     mBtn.setAttribute("aria-pressed", on ? "true" : "false");
-    mLbl.textContent = on ? "Music on" : "Play music";
+    mLbl.textContent = on ? "Music on" : "Music";
     mBtn.setAttribute("aria-label", on ? "Stop music" : "Play music");
   }
   var MUSIC_KEY = "ccl27-music";
@@ -114,7 +114,10 @@
     // constant speed (~70px/s) however long the list gets
     var w = run.firstChild.scrollWidth;
     run.style.animationDuration = Math.max(20, w / 70) + "s";
-    if (n) countEl.textContent = n + (n === 1 ? " Player" : " Players");
+    if (n) {
+      countEl.textContent = n + (n === 1 ? " Player" : " Players");
+      document.getElementById("regCountSub").textContent = "registered so far";
+    }
   }
 
   function loadPlayers() {
