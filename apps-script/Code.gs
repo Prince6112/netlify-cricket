@@ -91,7 +91,7 @@ function doPost(e) {
   }
 }
 
-// ?action=list → names for the live ticker (name, role, playing only: no phone, email or photo)
+// ?action=list → names for the live ticker (name, jersey no, role, playing only: no phone, email or photo)
 function doGet(e) {
   if (e && e.parameter && e.parameter.action === "list") {
     var cache = CacheService.getScriptCache();
@@ -105,6 +105,7 @@ function doGet(e) {
       for (var i = rows.length - 1; i >= 0 && players.length < TICKER_MAX; i--) {
         players.push({
           n: String(rows[i][col("name") - 1]).replace(/^'/, ""),
+          j: rows[i][col("jerseyNo") - 1],
           r: rows[i][col("role") - 1],
           p: rows[i][col("playing") - 1]
         });

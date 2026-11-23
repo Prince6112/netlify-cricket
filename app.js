@@ -82,7 +82,9 @@
   /* ---------- live ticker of registered players ---------- */
   var run = document.getElementById("tickerRun");
   var countEl = document.getElementById("regCount");
-  var players = [];          // [{n: name, r: role, p: Playing/Non-playing}]
+  var players = [];          // [{n: name, j: jersey no, r: role, p: Playing/Non-playing}]
+  var SAMPLES = (CFG.SAMPLE_PLAYERS || []).map(function (x) { return { n: x.name, j: x.no, r: x.role, p: x.playing }; });
+  var HIDE_SAMPLES_AFTER = CFG.HIDE_SAMPLES_AFTER == null ? 10 : CFG.HIDE_SAMPLES_AFTER;
   var total = null;
   var mine = [];             // registered from this page, shown before the server catches up
 
@@ -95,18 +97,25 @@
       var k = (p.n || "").toLowerCase();
       if (k && !seen[k]) { seen[k] = 1; list.push(p); }
     });
-    var n = Math.max(total || 0, list.length);
+    var n = Math.max(total || 0, list.length); // real registrations only (samples are not counted)
+    if (n < HIDE_SAMPLES_AFTER) {
+      SAMPLES.forEach(function (p) {
+        var k = (p.n || "").toLowerCase();
+        if (k && !seen[k]) { seen[k] = 1; list.push(p); }
+      });
+    }
     var items = ["Majestique Colours Cricket League 2027", "6th & 7th Feb 2027 · Player auction"];
     if ((SP.NAME || "").trim()) items.push("Title sponsor · " + SP.NAME.trim());
     if (n) items.push(n + (n === 1 ? " player" : " players") + " registered");
-    else items.push("Registrations open · Be the first!");
+    else items.push("Registrations open");
     var html = items.map(function (t) { return "<span class=\"tk-msg\">" + esc(t) + "</span>"; });
     if (list.length) {
       html.push("<span class=\"tk-msg\">Welcome to the auction pool</span>");
       list.forEach(function (p) {
         var ico = p.p === "Non-playing" ? "🙌" : (ROLE_ICO[p.r] || "🏏");
         var tag = p.p === "Non-playing" ? "Non-playing" : (p.r || "");
-        html.push("<span class=\"tk-name\">" + ico + " " + esc(p.n) + (tag ? " <small>" + esc(tag) + "</small>" : "") + "</span>");
+        var no = String(p.j == null ? "" : p.j).trim();
+        html.push("<span class=\"tk-name\">" + ico + " " + esc(p.n) + (no ? " <b class=\"tk-no\">#" + esc(no) + "</b>" : "") + (tag ? " <small>" + esc(tag) + "</small>" : "") + "</span>");
       });
     }
     var one = html.join("<em>●</em>") + "<em>●</em>";
@@ -303,7 +312,7 @@
     send(data).then(function (res) {
       if (!res || !res.ok) throw new Error((res && res.error) || "Something went wrong. Please try again.");
       clearDraft();
-      mine.unshift({ n: data.name, r: data.role, p: data.playing });
+      mine.unshift({ n: data.name, j: data.jerseyNo, r: data.role, p: data.playing });
       if (total !== null) total++;
       renderTicker();
       setTimeout(loadPlayers, 3000);

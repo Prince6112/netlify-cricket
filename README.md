@@ -34,6 +34,7 @@ To get the Excel file, open the sheet and choose **File → Download → Microso
 - Player photos are shrunk in the browser to a 480×480 JPEG (about 60 KB), saved in a Google Drive folder called **CCL 2027 Player Photos**, and linked from the sheet. On the first deploy Google also asks for Drive permission: allow it.
 - "Non-playing" registrations skip the playing role and batting hand questions.
 - The **LIVE ticker** at the top lists registered players (name and role only) and the total count. It checks the sheet every 30 seconds (`TICKER_REFRESH`), so new registrations appear on everyone's screen automatically.
+- **Sample players**: `SAMPLE_PLAYERS` in `config.js` fills the LIVE bar with example names and jersey numbers while it's quiet. Real players always appear first, samples are never counted in the totals, and they vanish by themselves once `HIDE_SAMPLES_AFTER` (10) real players have registered. Edit or delete them in `config.js` any time.
 - **Music**: the anthem starts on the visitor's first tap anywhere on the page (phones block sound before that) and loops. The MUSIC button at the right end of the LIVE bar (top of the page) stops it, and the page remembers that choice.
 - **Title sponsor**: set `TITLE_SPONSOR.NAME` (and optionally `LOGO`, e.g. `assets/sponsor.webp`, and `TAGLINE`) in `config.js`. Until then it shows "To be announced".
 - If you already have a "Registrations" tab from the old version of the form, rename or delete it first: the columns have changed.

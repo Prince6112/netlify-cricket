@@ -221,6 +221,7 @@ textarea { resize: vertical; min-height: 84px; line-height: 1.4; }
 .ticker-run:hover { animation-play-state: paused; }
 .ticker-run span { padding: 0 6px; font-family: "Teko", sans-serif; font-size: 21px; line-height: 1; letter-spacing: .04em; text-transform: uppercase; }
 .ticker-run .tk-msg { color: var(--lime); }
+.ticker-run .tk-no { color: var(--sky); font-weight: 600; }
 .ticker-run small { font-family: "Hind", sans-serif; font-size: 12px; opacity: .75; text-transform: none; letter-spacing: 0; }
 .ticker-run em { font-style: normal; color: var(--sky); font-size: 10px; padding: 0 8px; }
 @keyframes run { to { transform: translateX(-50%); } }
