@@ -7,10 +7,15 @@
  *
  * Every registration becomes one row in the "Registrations" tab.
  * File → Download → Microsoft Excel (.xlsx) gives you the Excel file any time.
+ * Player photos are saved in a Google Drive folder ("CCL 2027 Player Photos");
+ * the sheet stores a link to each one.
+ * The page's live ticker reads registered names from doGet (?action=list).
  */
 
 var SHEET_NAME = "Registrations";
 var ID_PREFIX = "CCL27-";
+var PHOTO_FOLDER = "CCL 2027 Player Photos";
+var TICKER_MAX = 150; // newest N names sent to the ticker
 
 // [column header, key sent by the form]
 var COLUMNS = [
@@ -20,17 +25,22 @@ var COLUMNS = [
   ["WhatsApp", "mobile"],
   ["Email", "email"],
   ["Gender", "gender"],
-  ["Date of Birth", "dob"],
-  ["Age (on 6 Feb 2027)", "_age"],
-  ["Area", "area"],
+  ["Playing / Non-playing", "playing"],
+  ["Available for Practice", "practice"],
   ["Role", "role"],
   ["Batting Hand", "batHand"],
-  ["Bowling Style", "bowlStyle"],
   ["Jersey Name", "jerseyName"],
   ["Jersey No", "jerseyNo"],
   ["T-shirt Size", "tshirt"],
+  ["Photo", "_photo"],
+  ["Comments", "comments"],
   ["Declaration", "agree"]
 ];
+
+function col(key) {
+  for (var i = 0; i < COLUMNS.length; i++) if (COLUMNS[i][1] === key) return i + 1;
+  return 0;
+}
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -48,7 +58,7 @@ function doPost(e) {
     // one registration per WhatsApp number
     var last = sheet.getLastRow();
     if (last > 1) {
-      var mobiles = sheet.getRange(2, 4, last - 1, 1).getDisplayValues();
+      var mobiles = sheet.getRange(2, col("mobile"), last - 1, 1).getDisplayValues();
       for (var i = 0; i < mobiles.length; i++) {
         if (String(mobiles[i][0]).replace(/\D/g, "").slice(-10) === mobile) {
           var existing = sheet.getRange(i + 2, 1).getDisplayValue();
@@ -60,16 +70,18 @@ function doPost(e) {
     var id = ID_PREFIX + ("000" + last).slice(-4); // row 2 → 0001
     d._id = id;
     d._ts = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd-MMM-yyyy HH:mm:ss");
-    d._age = ageOn(d.dob, new Date(2027, 1, 6));
+    d._photo = savePhoto(d.photo, id, clean(d.name));
 
     var row = COLUMNS.map(function (c) {
-      var v = c[1].charAt(0) === "_" ? d[c[1]] : clean(d[c[1]]);
+      var v = c[1].charAt(0) === "_" ? d[c[1]] : clean(d[c[1]], c[1] === "comments" ? 300 : 100);
       return v === undefined ? "" : v;
     });
     sheet.appendRow(row);
     // keep mobile / jersey no as text so Excel doesn't strip zeros
-    sheet.getRange(sheet.getLastRow(), 4).setNumberFormat("@").setValue(mobile);
-    sheet.getRange(sheet.getLastRow(), 14).setNumberFormat("@").setValue(clean(d.jerseyNo));
+    var r = sheet.getLastRow();
+    sheet.getRange(r, col("mobile")).setNumberFormat("@").setValue(mobile);
+    sheet.getRange(r, col("jerseyNo")).setNumberFormat("@").setValue(clean(d.jerseyNo));
+    CacheService.getScriptCache().remove("list"); // ticker shows the new name on its next check
 
     return json({ ok: true, id: id });
   } catch (ex) {
@@ -79,14 +91,53 @@ function doPost(e) {
   }
 }
 
-function doGet() {
+// ?action=list → names for the live ticker (name, role, playing only: no phone, email or photo)
+function doGet(e) {
+  if (e && e.parameter && e.parameter.action === "list") {
+    var cache = CacheService.getScriptCache();
+    var hit = cache.get("list");
+    if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
+    var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    var players = [], count = 0;
+    if (sh && sh.getLastRow() > 1) {
+      var rows = sh.getRange(2, 1, sh.getLastRow() - 1, COLUMNS.length).getDisplayValues();
+      count = rows.length;
+      for (var i = rows.length - 1; i >= 0 && players.length < TICKER_MAX; i--) {
+        players.push({
+          n: String(rows[i][col("name") - 1]).replace(/^'/, ""),
+          r: rows[i][col("role") - 1],
+          p: rows[i][col("playing") - 1]
+        });
+      }
+    }
+    var out = JSON.stringify({ ok: true, count: count, players: players });
+    cache.put("list", out, 20); // seconds: keeps many open pages from hammering the sheet
+    return ContentService.createTextOutput(out).setMimeType(ContentService.MimeType.JSON);
+  }
   return json({ ok: true, service: "CCL 2027 registration" });
+}
+
+// saves the base64 JPEG from the form into Drive, returns a viewable link ("" if none / failed)
+function savePhoto(dataUrl, id, name) {
+  var m = /^data:image\/(jpeg|png);base64,(.+)$/.exec(String(dataUrl || ""));
+  if (!m || m[2].length > 2000000) return "";
+  try {
+    var folders = DriveApp.getFoldersByName(PHOTO_FOLDER);
+    var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(PHOTO_FOLDER);
+    var blob = Utilities.newBlob(Utilities.base64Decode(m[2]), "image/" + m[1],
+      id + " " + name.replace(/[^\w .-]/g, "") + (m[1] === "png" ? ".png" : ".jpg"));
+    var file = folder.createFile(blob);
+    return file.getUrl();
+  } catch (ex) {
+    return "";
+  }
 }
 
 function validate(d) {
   if (!clean(d.name)) return "Name is required";
   if (!/^[6-9]\d{9}$/.test(clean(d.mobile))) return "Invalid mobile number";
-  var req = ["gender", "dob", "area", "role", "batHand", "jerseyName", "jerseyNo", "tshirt"];
+  var req = ["gender", "playing", "practice", "jerseyName", "jerseyNo", "tshirt"];
+  if (d.playing === "Playing") req.push("role", "batHand");
   for (var i = 0; i < req.length; i++) if (!clean(d[req[i]])) return "Missing: " + req[i];
   if (d.agree !== "Yes") return "Please accept the declaration";
   return "";
@@ -103,17 +154,9 @@ function getSheet() {
   return sh;
 }
 
-function ageOn(dob, ref) {
-  var b = new Date(dob);
-  if (isNaN(b)) return "";
-  var a = ref.getFullYear() - b.getFullYear();
-  if (ref.getMonth() < b.getMonth() || (ref.getMonth() === b.getMonth() && ref.getDate() < b.getDate())) a--;
-  return a;
-}
-
 // trims, caps length, and blocks spreadsheet formula injection (=, +, -, @)
-function clean(v) {
-  v = String(v == null ? "" : v).trim().slice(0, 100);
+function clean(v, max) {
+  v = String(v == null ? "" : v).trim().slice(0, max || 100);
   return /^[=+\-@]/.test(v) ? "'" + v : v;
 }
 

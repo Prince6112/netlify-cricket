@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Majestique Colours Cricket League 2027 · Player Registration</title>
-<meta name="description" content="Player registration for Majestique Colours Cricket League 2027 — 6th & 7th February 2027. Free registration, player auction.">
+<meta name="description" content="Player registration for Majestique Colours Cricket League 2027 — 6th & 7th February 2027. Register for the player auction.">
 <meta property="og:title" content="Majestique Colours Cricket League 2027 — Player Registration">
-<meta property="og:description" content="6th & 7th Feb 2027 · Free registration · Register for the player auction">
+<meta property="og:description" content="6th & 7th Feb 2027 · Register for the player auction">
 <meta property="og:image" content="assets/ccl-2027.webp">
 <meta name="theme-color" content="#1b3a8f">
 <link rel="icon" href="assets/icon.png">
@@ -17,6 +17,10 @@
 </head>
 <body>
 <div class="rainbow" aria-hidden="true"></div>
+<div class="ticker" aria-label="Registered players">
+  <span class="ticker-tag">LIVE</span>
+  <div class="ticker-track"><div class="ticker-run" id="tickerRun"></div></div>
+</div>
 
 <header class="hero">
   <div class="wrap">
@@ -25,6 +29,11 @@
       <span>presents</span>
     </div>
     <img class="badge" src="assets/ccl-2027.webp" alt="CCL 2027 logo" width="260" height="243">
+    <div class="sponsor-strip" id="sponsorStrip">
+      <span>Title sponsor</span>
+      <img id="sponsorLogoTop" alt="" hidden>
+      <b id="sponsorNameTop">To be announced</b>
+    </div>
     <p class="kicker">🔥 Ab Khela  Hoga… 🔥</p>
     <h1>Majestique <span class="c-text">Colours</span> Cricket League <span class="yr">2027</span></h1>
     <p class="tagline">“Jahan junoon hai, wahaan cricket ka rang hai” 😎</p>
@@ -32,7 +41,7 @@
     <div class="facts">
       <div class="fact"><span class="ico">📅</span><b>6th &amp; 7th Feb 2027</b><small>Saturday &amp; Sunday</small></div>
       <div class="fact"><span class="ico">🔨</span><b>Player Auction</b><small>Register individually</small></div>
-      <div class="fact"><span class="ico">🆓</span><b>No Registration Fee</b><small>Free for everyone</small></div>
+      <div class="fact"><span class="ico">👥</span><b id="regCount">Players</b><small>registered so far</small></div>
     </div>
 
     <ul class="hype" lang="hi">
@@ -46,6 +55,11 @@
     <p class="countdown" id="countdown" aria-live="polite"></p>
   </div>
 </header>
+
+<button type="button" class="music" id="musicBtn" aria-pressed="false" aria-label="Play music">
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Play music</span>
+</button>
+<audio id="anthem" src="assets/anthem.mp3" loop preload="none"></audio>
 
 <main id="register" class="wrap">
   <section class="card" id="formCard">
@@ -75,18 +89,41 @@
               <label class="chip"><input type="radio" name="gender" value="Female"><span>Female</span></label>
             </div>
           </div>
-          <label class="field">Date of birth <span class="req">*</span>
-            <input name="dob" type="date" min="1945-01-01" max="2020-12-31" required>
-          </label>
-          <label class="field full">Area / locality <span class="req">*</span>
-            <input name="area" autocomplete="address-level2" maxlength="60" required placeholder="e.g. Kothrud, Pune">
-          </label>
+          <div class="field full photo-field">
+            <span class="lbl">Your photo</span>
+            <div class="photo-row">
+              <div class="photo-prev" id="phPrev"><img id="phImg" alt="" hidden><span id="phPh">📷</span></div>
+              <div class="photo-actions">
+                <label class="filebtn">🖼️ Choose photo<input type="file" id="photo" accept="image/*"></label>
+                <label class="filebtn">🤳 Take selfie<input type="file" id="photoCam" accept="image/*" capture="user"></label>
+                <button type="button" class="link" id="phClear" hidden>Remove</button>
+                <small class="hint">Clear face, shoulders up. This photo is shown at the auction.</small>
+              </div>
+            </div>
+          </div>
         </div>
       </fieldset>
 
       <fieldset>
         <legend><span class="num">2</span> Cricket profile</legend>
-        <div class="field">
+        <div class="grid">
+          <div class="field">
+            <span class="lbl">Playing or non-playing? <span class="req">*</span></span>
+            <div class="chips" role="radiogroup">
+              <label class="chip"><input type="radio" name="playing" value="Playing" required><span>🏏 Playing</span></label>
+              <label class="chip"><input type="radio" name="playing" value="Non-playing"><span>🙌 Non-playing</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <span class="lbl">Available for practice? <span class="req">*</span></span>
+            <div class="chips" role="radiogroup">
+              <label class="chip"><input type="radio" name="practice" value="Yes" required><span>Yes</span></label>
+              <label class="chip"><input type="radio" name="practice" value="No"><span>No</span></label>
+            </div>
+          </div>
+        </div>
+        <div id="playOnly">
+        <div class="field role-field">
           <span class="lbl">Playing role <span class="req">*</span></span>
           <div class="chips roles" role="radiogroup">
             <label class="chip"><input type="radio" name="role" value="Batter" required><span>🏏 Batter</span></label>
@@ -103,16 +140,7 @@
               <label class="chip"><input type="radio" name="batHand" value="Left"><span>Left</span></label>
             </div>
           </div>
-          <label class="field">Bowling style
-            <select name="bowlStyle">
-              <option value="">— select —</option>
-              <option>Right-arm fast / medium</option>
-              <option>Left-arm fast / medium</option>
-              <option>Right-arm spin</option>
-              <option>Left-arm spin</option>
-              <option>Don't bowl</option>
-            </select>
-          </label>
+        </div>
         </div>
       </fieldset>
 
@@ -142,7 +170,14 @@
       </fieldset>
 
       <fieldset>
-        <legend><span class="num">4</span> Declaration</legend>
+        <legend><span class="num">4</span> Anything else?</legend>
+        <label class="field">Other comments
+          <textarea name="comments" rows="3" maxlength="300" placeholder="optional: availability, injuries, team preference, anything the organisers should know"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="num">5</span> Declaration</legend>
         <ul class="rules">
           <li>I am physically fit to play and will inform the organisers of any medical condition in advance.</li>
           <li>All details in this form are true and complete.</li>
@@ -159,7 +194,7 @@
 
       <p class="form-error" id="formError" role="alert" hidden></p>
       <button type="submit" class="submit" id="submitBtn">Submit registration</button>
-      <p class="fine">No registration fee. Your details are only used for organising this league.</p>
+      <p class="fine">Your details are only used for organising this league.</p>
     </form>
   </section>
 
@@ -173,9 +208,18 @@
   </section>
 </main>
 
+<section class="wrap sponsor-band" aria-label="Title sponsor">
+  <div class="card sponsor-card">
+    <p class="eyebrow">Title sponsor</p>
+    <img id="sponsorLogo" alt="" hidden>
+    <h2 id="sponsorName">To be announced</h2>
+    <p class="sub" id="sponsorTag"></p>
+  </div>
+</section>
+
 <footer class="foot">
   <div class="wrap">
-    <p><b>Colours</b> · Colour your Dreams</p>
+    <p><b>Colours</b> · Colour your Dreams<span id="sponsorFoot"></span></p>
     <p class="tags">#MajestiqueCCL2027 #ColoursCricketLeague #CricketKaJunoon</p>
   </div>
 </footer>

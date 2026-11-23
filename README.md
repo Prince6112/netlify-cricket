@@ -1,7 +1,7 @@
 # Majestique Colours Cricket League 2027 — Player Registration
 
 A single-page, mobile-friendly registration form for the player auction (6–7 Feb 2027).
-It needs no server and no fees. Each submission becomes one row in a Google Sheet, and you can download that sheet as Excel (.xlsx) whenever you want.
+It needs no server. Each submission becomes one row in a Google Sheet, and you can download that sheet as Excel (.xlsx) whenever you want.
 
 ## Files
 
@@ -10,7 +10,8 @@ It needs no server and no fees. Each submission becomes one row in a Google Shee
 | `index.html` | The page |
 | `style.css` | Styling |
 | `app.js` | Validation, jersey preview, submit |
-| `config.js` | **Paste your Google Script URL here** |
+| `config.js` | **Paste your Google Script URL here**, plus the title sponsor's name and logo |
+| `assets/anthem.mp3` | Background music (the soundtrack of the CCL 2027 promo video) |
 | `apps-script/Code.gs` | Code that receives registrations into the Google Sheet |
 | `assets/` | Logos, resized for the web |
 
@@ -30,5 +31,10 @@ To get the Excel file, open the sheet and choose **File → Download → Microso
 
 - Each registration gets an ID: `CCL27-0001`, `CCL27-0002`, …
 - Each WhatsApp number can register only once.
-- The sheet adds an "Age on 6 Feb 2027" column automatically.
+- Player photos are shrunk in the browser to a 480×480 JPEG (about 60 KB), saved in a Google Drive folder called **CCL 2027 Player Photos**, and linked from the sheet. On the first deploy Google also asks for Drive permission: allow it.
+- "Non-playing" registrations skip the playing role and batting hand questions.
+- The **LIVE ticker** at the top lists registered players (name and role only) and the total count. It checks the sheet every 30 seconds (`TICKER_REFRESH`), so new registrations appear on everyone's screen automatically.
+- **Music**: the "Play music" button plays the anthem on a loop. Browsers don't allow sound to start by itself, so a visitor has to tap it.
+- **Title sponsor**: set `TITLE_SPONSOR.NAME` (and optionally `LOGO`, e.g. `assets/sponsor.webp`, and `TAGLINE`) in `config.js`. Until then it shows "To be announced".
+- If you already have a "Registrations" tab from the old version of the form, rename or delete it first: the columns have changed.
 - Until `SCRIPT_URL` is set, the form runs in **demo mode**: it shows the success screen but saves nothing.
