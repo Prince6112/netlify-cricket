@@ -260,7 +260,7 @@ textarea { resize: vertical; min-height: 84px; line-height: 1.4; }
 /* jersey rail: kits on hangers, scrolling the other way under the LIVE bar */
 .rail {
   background: linear-gradient(180deg, #0a1636, #142c6e); overflow: hidden; position: relative;
-  border-bottom: 3px solid transparent; border-image: var(--rainbow) 1;
+  border-top: 3px solid transparent; border-bottom: 3px solid transparent; border-image: var(--rainbow) 1;
 }
 .rail::before {
   content: ""; position: absolute; left: 0; right: 0; top: 13px; height: 3px; z-index: 1;
@@ -269,6 +269,7 @@ textarea { resize: vertical; min-height: 84px; line-height: 1.4; }
 .rail-run { display: flex; width: max-content; animation: run 60s linear infinite reverse; }
 .rail-run > div { display: flex; padding: 10px 0 8px; }
 .rail:hover .rail-run { animation-play-state: paused; }
+.rail + main { padding-top: 24px; }
 .kit { position: relative; margin: 0 4px; width: 84px; text-align: center; flex: none; }
 .kit svg { display: block; width: 84px; height: 99px; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .35)); }
 .kit-no {
