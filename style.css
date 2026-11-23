@@ -256,6 +256,34 @@ textarea { resize: vertical; min-height: 84px; line-height: 1.4; }
 .ticker-run small { font-family: "Hind", sans-serif; font-size: 12px; opacity: .75; text-transform: none; letter-spacing: 0; }
 .ticker-run em { font-style: normal; color: var(--sky); font-size: 10px; padding: 0 8px; }
 @keyframes run { to { transform: translateX(-50%); } }
+
+/* jersey rail: kits on hangers, scrolling the other way under the LIVE bar */
+.rail {
+  background: linear-gradient(180deg, #0a1636, #142c6e); overflow: hidden; position: relative;
+  border-bottom: 3px solid transparent; border-image: var(--rainbow) 1;
+}
+.rail::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 13px; height: 3px; z-index: 1;
+  background: linear-gradient(90deg, #8d96a8, #e6e9f0, #8d96a8); box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+.rail-run { display: flex; width: max-content; animation: run 60s linear infinite reverse; }
+.rail-run > div { display: flex; padding: 10px 0 8px; }
+.rail:hover .rail-run { animation-play-state: paused; }
+.kit { position: relative; margin: 0 4px; width: 84px; text-align: center; flex: none; }
+.kit svg { display: block; width: 84px; height: 99px; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .35)); }
+.kit-no {
+  position: absolute; left: 0; right: 0; top: 44px; font-family: "Teko", sans-serif; font-weight: 600;
+  font-size: 34px; line-height: 1; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, .3);
+}
+.kit figcaption {
+  color: #fff; font-size: 12px; font-weight: 600; line-height: 1.2; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rail { overflow-x: auto; }
+  .rail-run { animation: none; }
+  .rail-run > div + div { display: none; }
+}
 @keyframes blink { 50% { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) {
   .ticker-track { overflow-x: auto; }

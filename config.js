@@ -8,7 +8,7 @@ window.CCL_CONFIG = {
   // Title sponsor. Leave name empty to show "To be announced".
   // For a logo, put the image in assets/ (e.g. assets/sponsor.webp) and set LOGO to that path.
   TITLE_SPONSOR: {
-    NAME: "",
+    NAME: "Majestique Landmarks",
     LOGO: "",
     TAGLINE: ""
   },

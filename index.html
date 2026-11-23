@@ -34,6 +34,23 @@
     <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Music</span>
   </button>
 </div>
+<div class="rail" id="rail" aria-label="Jerseys of registered players" hidden>
+  <div class="rail-run" id="railRun"></div>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5fd6"/><stop offset="1" stop-color="#142c6e"/></linearGradient>
+    <linearGradient id="gStripe" x1="0" x2="1"><stop offset="0" stop-color="#9b2a8f"/><stop offset=".17" stop-color="#3b2a8a"/><stop offset=".33" stop-color="#4a7bc1"/><stop offset=".5" stop-color="#1a9a3a"/><stop offset=".67" stop-color="#f2c81b"/><stop offset=".83" stop-color="#ee7a22"/><stop offset="1" stop-color="#e02424"/></linearGradient>
+  </defs>
+  <symbol id="jersey" viewBox="0 -18 100 118">
+    <path d="M50 -16 q7 0 7 6 q0 5 -7 7 v5" fill="none" stroke="#c9cfdb" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M50 2 L22 15 M50 2 L78 15" fill="none" stroke="#c9cfdb" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M30 13 L41 9 Q50 17 59 9 L70 13 L92 27 L84 44 L74 38 L74 96 L26 96 L26 38 L16 44 L8 27 Z" fill="url(#gBody)" stroke="#0a1636" stroke-width="1"/>
+    <path d="M30 13 L8 27 L16 44 L26 38 Z M70 13 L92 27 L84 44 L74 38 Z" fill="#2bb3ff"/>
+    <path d="M41 9 Q50 17 59 9 L56 8 Q50 13 44 8 Z" fill="#b8e01c"/>
+    <rect x="27" y="86" width="46" height="5" fill="url(#gStripe)"/>
+  </symbol>
+</svg>
 
 <header class="hero">
   <div class="wrap">

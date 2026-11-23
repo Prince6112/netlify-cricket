@@ -74,6 +74,26 @@
 
   /* ---------- live ticker of registered players ---------- */
   var run = document.getElementById("tickerRun");
+  var rail = document.getElementById("rail"), railRun = document.getElementById("railRun");
+  // "Rahul Patil" -> "Rahul P" (fits under a jersey)
+  function shortName(n) {
+    var w = String(n || "").trim().split(/\s+/);
+    return w.length > 1 ? w[0] + " " + w[w.length - 1].charAt(0).toUpperCase() : w[0];
+  }
+  function renderRail(list) {
+    if (!list.length) { rail.hidden = true; return; }
+    var one = list.map(function (p) {
+      var no = String(p.j == null ? "" : p.j).trim();
+      return "<figure class=\"kit\"><svg viewBox=\"0 0 100 118\"><use href=\"#jersey\"/></svg>" +
+        "<span class=\"kit-no\">" + esc(no) + "</span><figcaption>" + esc(shortName(p.n)) + "</figcaption></figure>";
+    }).join("");
+    // repeat short lists so the rail is always wider than the screen, then double it for a seamless loop
+    var reps = Math.max(1, Math.ceil(16 / list.length));
+    var block = new Array(reps + 1).join(one);
+    railRun.innerHTML = "<div>" + block + "</div><div aria-hidden=\"true\">" + block + "</div>";
+    rail.hidden = false;
+    railRun.style.animationDuration = Math.max(20, railRun.firstChild.scrollWidth / 45) + "s";
+  }
   var countEl = document.getElementById("regCount");
   var players = [];          // [{n: name, j: jersey no, r: role, p: Playing/Non-playing}]
   var SAMPLES = (CFG.SAMPLE_PLAYERS || []).map(function (x) { return { n: x.name, j: x.no, r: x.role, p: x.playing }; });
@@ -111,6 +131,7 @@
         html.push("<span class=\"tk-name\">" + ico + " " + esc(p.n) + (no ? " <b class=\"tk-no\">#" + esc(no) + "</b>" : "") + (tag ? " <small>" + esc(tag) + "</small>" : "") + "</span>");
       });
     }
+    renderRail(list);
     var one = html.join("<em>●</em>") + "<em>●</em>";
     run.innerHTML = "<div>" + one + "</div><div aria-hidden=\"true\">" + one + "</div>";
     // constant speed (~70px/s) however long the list gets
