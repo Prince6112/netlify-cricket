@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="gated">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,16 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-in">
+    <img class="gate-colours" src="assets/colours-logo.webp" alt="Colours presents" width="150" height="98">
+    <img class="gate-badge" src="assets/ccl-2027-cutout.webp" alt="" width="419" height="404">
+    <h2 id="gateTitle">CCL 2027 · <span>LIVE</span></h2>
+    <p class="gate-tag">Ab khela hoga… aapki entry.</p>
+    <button type="button" class="gate-go" id="gateGo">Chalo, khelein ♪ <span aria-hidden="true">→</span></button>
+    <button type="button" class="gate-quiet" id="gateQuiet">Enter without music</button>
+  </div>
+</div>
 <div class="rainbow" aria-hidden="true"></div>
 <div class="ticker" aria-label="Registered players">
   <span class="ticker-tag">LIVE</span>

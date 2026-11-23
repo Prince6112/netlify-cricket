@@ -29,6 +29,37 @@ img { max-width: 100%; height: auto; }
 
 .rainbow { height: 6px; background: var(--rainbow); }
 
+/* ---------- welcome screen (its button starts the music) ---------- */
+html.gated, html.gated body { overflow: hidden; }
+.gate {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px 16px;
+  color: #fff; text-align: center;
+  background: radial-gradient(70% 55% at 50% 45%, #1f4fbf 0%, #142c6e 45%, #0a1636 100%);
+  transition: opacity .5s ease, visibility .5s;
+}
+.gate.leaving { opacity: 0; visibility: hidden; }
+.gate::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--rainbow); }
+.gate-in { max-width: 520px; animation: gateIn .8s ease both; }
+.gate-colours { width: 110px; border-radius: 8px; background: #fff; padding: 4px 6px; }
+.gate-badge { display: block; width: 190px; margin: 14px auto 4px; filter: drop-shadow(0 10px 30px rgba(43, 179, 255, .45)); }
+.gate h2 { font-family: "Teko", sans-serif; font-weight: 600; font-size: clamp(48px, 13vw, 88px); line-height: .9; margin: 6px 0; letter-spacing: .02em; }
+.gate h2 span { color: var(--lime); }
+.gate-tag { margin: 4px 0 26px; font-size: 19px; font-style: italic; opacity: .9; }
+.gate-go {
+  font: inherit; font-weight: 700; font-size: 20px; color: var(--navy); background: var(--lime);
+  border: 0; border-radius: 999px; padding: 14px 32px; min-height: 52px; cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(184, 224, 28, .6); animation: pulse 2s ease-out infinite;
+}
+.gate-go:hover { background: #d4f53a; }
+.gate-go:focus-visible, .gate-quiet:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.gate-quiet {
+  display: block; margin: 16px auto 0; font: inherit; font-size: 14px; color: #fff; opacity: .75;
+  background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 8px;
+}
+@keyframes pulse { 70% { box-shadow: 0 0 0 18px rgba(184, 224, 28, 0); } 100% { box-shadow: 0 0 0 0 rgba(184, 224, 28, 0); } }
+@keyframes gateIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+@media (prefers-reduced-motion: reduce) { .gate-in, .gate-go { animation: none; } }
+
 /* ---------- hero ---------- */
 .hero {
   text-align: center;

@@ -35,7 +35,7 @@ To get the Excel file, open the sheet and choose **File → Download → Microso
 - "Non-playing" registrations skip the playing role and batting hand questions.
 - The **LIVE ticker** at the top lists registered players (name and role only) and the total count. It checks the sheet every 30 seconds (`TICKER_REFRESH`), so new registrations appear on everyone's screen automatically.
 - **Sample players**: `SAMPLE_PLAYERS` in `config.js` fills the LIVE bar with example names and jersey numbers while it's quiet. Real players always appear first, samples are never counted in the totals, and they vanish by themselves once `HIDE_SAMPLES_AFTER` (10) real players have registered. Edit or delete them in `config.js` any time.
-- **Music**: the anthem starts on the visitor's first tap anywhere on the page (phones block sound before that) and loops. The MUSIC button at the right end of the LIVE bar (top of the page) stops it, and the page remembers that choice.
+- **Welcome screen + music**: the page opens on a full-screen welcome with a "Chalo, khelein ♪" button. Phones only allow sound after a tap, so that button starts the anthem (looping) and opens the site. "Enter without music" skips it. The MUSIC button in the LIVE bar turns it on or off later.
 - **Title sponsor**: set `TITLE_SPONSOR.NAME` (and optionally `LOGO`, e.g. `assets/sponsor.webp`, and `TAGLINE`) in `config.js`. Until then it shows "To be announced".
 - If you already have a "Registrations" tab from the old version of the form, rename or delete it first: the columns have changed.
 - Until `SCRIPT_URL` is set, the form runs in **demo mode**: it shows the success screen but saves nothing.
