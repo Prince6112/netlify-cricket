@@ -7,7 +7,7 @@
 <meta name="description" content="Player registration for Majestique Colours Cricket League 2027 — 6th & 7th February 2027. Register for the player auction.">
 <meta property="og:title" content="Majestique Colours Cricket League 2027 — Player Registration">
 <meta property="og:description" content="6th & 7th Feb 2027 · Register for the player auction">
-<meta property="og:image" content="assets/ccl-2027.webp">
+<meta property="og:image" content="assets/og.jpg">
 <meta name="theme-color" content="#1b3a8f">
 <link rel="icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,7 @@
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
   <div class="gate-in">
     <img class="gate-colours" src="assets/colours-logo.webp" alt="Colours presents" width="150" height="98">
-    <img class="gate-badge" src="assets/ccl-2027-cutout.webp" alt="" width="419" height="404">
+    <img class="gate-badge" src="assets/majestic-ccl-2027-light.webp" alt="" width="420" height="517">
     <h2 id="gateTitle">CCL 2027 · <span>LIVE</span></h2>
     <p class="gate-tag">Ab khela hoga… aapki entry.</p>
     <button type="button" class="gate-go" id="gateGo">Chalo, khelein ♪ <span aria-hidden="true">→</span></button>
@@ -55,7 +55,7 @@
       <img src="assets/colours-logo.webp" alt="Colours — Colour your Dreams" width="150" height="98">
       <span>presents</span>
     </div>
-    <img class="badge" src="assets/ccl-2027.webp" alt="CCL 2027 logo" width="260" height="243">
+    <img class="badge" src="assets/majestic-ccl-2027.webp" alt="Majestic CCL 2027 logo" width="260" height="320">
     <div class="sponsor-strip" id="sponsorStrip">
       <span>Title sponsor</span>
       <img id="sponsorLogoTop" alt="" hidden>
@@ -89,9 +89,20 @@
 </div>
 
 <main id="register" class="wrap">
-  <section class="card" id="formCard">
+  <section class="card choose" id="chooseCard">
     <h2>Player Registration</h2>
+    <p class="sub">Boys and girls register on separate forms. Pick yours:</p>
+    <div class="choose-btns">
+      <a class="pick" href="?for=boys#register" data-cat="boys"><span class="pick-ico" aria-hidden="true">🏏</span><b>Boys</b><small>Registration form</small></a>
+      <a class="pick girls" href="?for=girls#register" data-cat="girls"><span class="pick-ico" aria-hidden="true">🏏</span><b>Girls</b><small>Registration form</small></a>
+    </div>
+  </section>
+
+  <section class="card" id="formCard" hidden>
+    <p class="cat-tag" id="catTag"></p>
+    <h2 id="formTitle">Player Registration</h2>
     <p class="sub">Fill this once per player. Fields marked <span class="req">*</span> are required. It takes about 2 minutes.</p>
+    <p class="switch" id="switchLine"></p>
 
     <form id="regForm" novalidate>
       <!-- spam trap: real people never see or fill this -->
@@ -109,13 +120,6 @@
           <label class="field">Email
             <input name="email" type="email" autocomplete="email" maxlength="80" placeholder="optional">
           </label>
-          <div class="field">
-            <span class="lbl">Gender <span class="req">*</span></span>
-            <div class="chips" role="radiogroup">
-              <label class="chip"><input type="radio" name="gender" value="Male" required><span>Male</span></label>
-              <label class="chip"><input type="radio" name="gender" value="Female"><span>Female</span></label>
-            </div>
-          </div>
           <div class="field full photo-field">
             <span class="lbl">Your photo</span>
             <div class="photo-row">
@@ -180,18 +184,100 @@
           <label class="field">Jersey number <span class="req">*</span>
             <input name="jerseyNo" type="text" inputmode="numeric" maxlength="2" pattern="[0-9]{1,2}" required placeholder="0 – 99">
           </label>
-          <label class="field">T-shirt size <span class="req">*</span>
-            <select name="tshirt" required>
-              <option value="">— select —</option>
-              <option>XS</option><option>S</option><option>M</option><option>L</option>
-              <option>XL</option><option>XXL</option><option>3XL</option>
-            </select>
-          </label>
         </div>
-        <div class="jersey-preview" aria-hidden="true">
-          <div class="shirt">
-            <span class="jn" id="pvName">YOUR NAME</span>
-            <span class="jno" id="pvNo">00</span>
+
+        <!-- shared jersey shapes -->
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+          <defs>
+            <path id="shirtShape" d="M70,14 L40,22 L8,48 L22,86 L42,76 L42,210 Q100,216 158,210 L158,76 L178,86 L192,48 L160,22 L130,14 Q100,28 70,14 Z"/>
+            <linearGradient id="kitGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0f2462"/>
+              <stop offset=".55" stop-color="#1f4fbf"/>
+              <stop offset="1" stop-color="#2bb3ff"/>
+            </linearGradient>
+            <linearGradient id="rainbowGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#9b2a8f"/><stop offset=".17" stop-color="#3b2a8a"/>
+              <stop offset=".33" stop-color="#4a7bc1"/><stop offset=".5" stop-color="#1a9a3a"/>
+              <stop offset=".67" stop-color="#f2c81b"/><stop offset=".83" stop-color="#ee7a22"/>
+              <stop offset="1" stop-color="#e02424"/>
+            </linearGradient>
+            <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 Z" fill="#e0532a"/>
+            </marker>
+          </defs>
+        </svg>
+
+        <div class="pv-kit" aria-label="Jersey preview">
+          <figure class="pv-view">
+            <svg viewBox="0 0 200 220" role="img" aria-label="Jersey front">
+              <use href="#shirtShape" fill="url(#kitGrad)"/>
+              <path d="M12,52 L25,84" stroke="#b8e01c" stroke-width="4"/>
+              <path d="M188,52 L175,84" stroke="#b8e01c" stroke-width="4"/>
+              <rect x="44" y="196" width="112" height="4" fill="url(#rainbowGrad)"/>
+              <rect x="96" y="24" width="8" height="30" rx="2" fill="#0b1a4a"/>
+              <circle cx="100" cy="34" r="1.6" fill="#fff"/><circle cx="100" cy="45" r="1.6" fill="#fff"/>
+              <path d="M70,14 Q84,22 100,26 L86,42 Z" fill="#0b1a4a" stroke="#b8e01c" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M130,14 Q116,22 100,26 L114,42 Z" fill="#0b1a4a" stroke="#b8e01c" stroke-width="1.5" stroke-linejoin="round"/>
+              <image href="assets/majestic-ccl-2027.webp" x="116" y="46" width="30" height="37"/>
+            </svg>
+            <figcaption>Front</figcaption>
+          </figure>
+          <figure class="pv-view">
+            <svg viewBox="0 0 200 220" role="img" aria-label="Jersey back with your name and number">
+              <use href="#shirtShape" fill="url(#kitGrad)"/>
+              <path d="M12,52 L25,84" stroke="#b8e01c" stroke-width="4"/>
+              <path d="M188,52 L175,84" stroke="#b8e01c" stroke-width="4"/>
+              <rect x="44" y="196" width="112" height="4" fill="url(#rainbowGrad)"/>
+              <path d="M70,14 Q100,28 130,14 L130,21 Q100,35 70,21 Z" fill="#0b1a4a"/>
+              <text x="100" y="56" class="pv-small">CCL 2027</text>
+              <text x="100" y="92" class="pv-name" id="pvName">YOUR NAME</text>
+              <text x="100" y="168" class="pv-no" id="pvNo">00</text>
+            </svg>
+            <figcaption>Back</figcaption>
+          </figure>
+        </div>
+        <p class="pv-note">✨ Your name and number appear on the jersey as you type.</p>
+
+        <div class="field size-field">
+          <span class="lbl">T-shirt size <span class="req">*</span></span>
+          <div class="chips sizes" role="radiogroup" aria-label="T-shirt size">
+            <label class="chip"><input type="radio" name="tshirt" value="S" required><span>S</span></label>
+            <label class="chip"><input type="radio" name="tshirt" value="M"><span>M</span></label>
+            <label class="chip"><input type="radio" name="tshirt" value="L"><span>L</span></label>
+            <label class="chip"><input type="radio" name="tshirt" value="XL"><span>XL</span></label>
+            <label class="chip"><input type="radio" name="tshirt" value="2XL"><span>2XL</span></label>
+            <label class="chip"><input type="radio" name="tshirt" value="3XL"><span>3XL</span></label>
+          </div>
+        </div>
+
+        <div class="sizechart">
+          <h3>Size chart <small>Indian sizes · in inches</small></h3>
+          <div class="sc-body">
+            <svg class="sc-diagram" viewBox="-6 0 236 222" role="img" aria-label="How chest and length are measured">
+              <use href="#shirtShape" fill="#fff" stroke="#18213a" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M70,14 Q84,22 100,26 L86,42 Z M130,14 Q116,22 100,26 L114,42 Z" fill="#fff" stroke="#18213a" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M100,26 L100,54" stroke="#18213a" stroke-width="2"/>
+              <path d="M48,92 L152,92" stroke="#e0532a" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+              <text x="100" y="86" class="sc-lbl">CHEST</text>
+              <path d="M160,14 L222,14 M158,210 L222,210" stroke="#9aa3b5" stroke-width="1" stroke-dasharray="3 3"/>
+              <path d="M212,18 L212,206" stroke="#e0532a" stroke-width="2.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+              <text x="0" y="0" class="sc-lbl" transform="translate(204 112) rotate(-90)">LENGTH</text>
+            </svg>
+            <table class="sc-table">
+              <thead><tr><th>Size</th><th>Chest</th><th>Length</th></tr></thead>
+              <tbody>
+                <tr data-size="S"><td>S</td><td>36</td><td>26</td></tr>
+                <tr data-size="M"><td>M</td><td>38</td><td>27</td></tr>
+                <tr data-size="L"><td>L</td><td>40</td><td>28</td></tr>
+                <tr data-size="XL"><td>XL</td><td>42</td><td>29</td></tr>
+                <tr data-size="2XL"><td>2XL</td><td>44</td><td>30</td></tr>
+                <tr data-size="3XL"><td>3XL</td><td>46</td><td>31</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sc-howto">
+            <b>How do I pick my size?</b>
+            <p>Measure around the fullest part of your chest with a measuring tape, in <b>inches</b>. Add <b>4 inches</b> to that number and choose the size with the closest chest value. Example: chest 36″ + 4 = 40 → size <b>L</b>. If you are between two sizes, pick the bigger one.</p>
           </div>
         </div>
       </fieldset>
@@ -231,7 +317,17 @@
     <p>Thank you, <b id="doneName"></b>. Your registration is confirmed.</p>
     <p class="regid">Registration ID<br><b id="doneId"></b></p>
     <p class="sub">Take a screenshot of this page. The organisers will contact you on WhatsApp with auction details.</p>
+    <p class="sub">Any queries? Contact <b>Rohit Jethale</b> – <a href="tel:+919373313346">93733 13346</a></p>
     <button type="button" class="link" id="againBtn">Register another player</button>
+  </section>
+
+  <section class="contact" aria-labelledby="contactH">
+    <h3 id="contactH">For any queries, contact</h3>
+    <p class="who"><b>Rohit Jethale</b> · <a href="tel:+919373313346">93733 13346</a></p>
+    <div class="contact-btns">
+      <a class="cbtn" href="tel:+919373313346">📞 Call</a>
+      <a class="cbtn wa" href="https://wa.me/919373313346" target="_blank" rel="noopener">💬 WhatsApp</a>
+    </div>
   </section>
 </main>
 
@@ -247,6 +343,7 @@
 <footer class="foot">
   <div class="wrap">
     <p><b>Colours</b> · Colour your Dreams<span id="sponsorFoot"></span></p>
+    <p>Queries: Rohit Jethale – <a href="tel:+919373313346">93733 13346</a></p>
     <p class="tags">#MajestiqueCCL2027 #ColoursCricketLeague #CricketKaJunoon</p>
   </div>
 </footer>

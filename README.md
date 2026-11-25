@@ -1,6 +1,12 @@
 # Majestique Colours Cricket League 2027 — Player Registration
 
-A single-page, mobile-friendly registration form for the player auction (6–7 Feb 2027).
+A mobile-friendly registration form for the player auction (6–7 Feb 2027), with **separate forms for boys and girls**.
+
+| Link | Opens |
+|---|---|
+| `https://<your-site>/boys` | Boys' form (same as `/?for=boys`) |
+| `https://<your-site>/girls` | Girls' form (same as `/?for=girls`) |
+| `https://<your-site>/` | A page asking "Boys or Girls?" |
 It needs no server. Each submission becomes one row in a Google Sheet, and you can download that sheet as Excel (.xlsx) whenever you want.
 
 ## Files
@@ -21,7 +27,9 @@ It needs no server. Each submission becomes one row in a Google Sheet, and you c
 2. In the sheet, open **Extensions → Apps Script**. Delete what's there, paste in the contents of `apps-script/Code.gs`, and save.
 3. Click **Deploy → New deployment**. For the type, choose **Web app**. Set **Execute as: Me** and **Who has access: Anyone**, then click **Deploy** and approve the permissions.
 4. Copy the **Web app URL** (it ends in `/exec`) into `config.js` as `SCRIPT_URL`.
-5. Submit one test registration. A **Registrations** tab should appear with a header row and your entry.
+5. In the Apps Script editor, pick **setup** in the function dropdown and click **Run**. This creates the **Boys** and **Girls** tabs with header rows.
+6. Submit one test registration on each form. Each should appear as a row in its own tab.
+7. Before going live, delete the test rows. Numbering restarts from 0001.
 
 If you later edit `Code.gs`, redeploy through **Deploy → Manage deployments → Edit → New version**. This keeps the same URL.
 
@@ -29,8 +37,12 @@ To get the Excel file, open the sheet and choose **File → Download → Microso
 
 ## Behaviour
 
-- Each registration gets an ID: `CCL27-0001`, `CCL27-0002`, …
-- Each WhatsApp number can register only once.
+- Boys' registrations go to the **Boys** tab, girls' to the **Girls** tab.
+- Each registration gets an ID: `CCL27-B-0001` for boys, `CCL27-G-0001` for girls.
+- Each WhatsApp number can register only once (checked across both tabs).
+- The jersey preview (front and back) shows the typed name and number live. The size chart (S–3XL, chest and length in inches) sits under the size picker; tapping a row picks that size.
+- Queries contact shown on the page: Rohit Jethale, 93733 13346.
+- The LIVE ticker and jersey rail show boys and girls together.
 - Player photos are shrunk in the browser to a 480×480 JPEG (about 60 KB), saved in a Google Drive folder called **CCL 2027 Player Photos**, and linked from the sheet. On the first deploy Google also asks for Drive permission: allow it.
 - "Non-playing" registrations skip the playing role and batting hand questions.
 - The **LIVE ticker** at the top lists registered players (name and role only) and the total count. It checks the sheet every 30 seconds (`TICKER_REFRESH`), so new registrations appear on everyone's screen automatically.
@@ -38,5 +50,5 @@ To get the Excel file, open the sheet and choose **File → Download → Microso
 - **Sample players**: `SAMPLE_PLAYERS` in `config.js` fills the LIVE bar with example names and jersey numbers while it's quiet. Real players always appear first, samples are never counted in the totals, and they vanish by themselves once `HIDE_SAMPLES_AFTER` (10) real players have registered. Edit or delete them in `config.js` any time.
 - **Welcome screen + music**: the page opens on a full-screen welcome with a "Chalo, khelein ♪" button. Phones only allow sound after a tap, so that button starts the anthem (looping) and opens the site. "Enter without music" skips it. The MUSIC button in the LIVE bar turns it on or off later.
 - **Title sponsor**: set `TITLE_SPONSOR.NAME` (and optionally `LOGO`, e.g. `assets/sponsor.webp`, and `TAGLINE`) in `config.js`. Until then it shows "To be announced".
-- If you already have a "Registrations" tab from the old version of the form, rename or delete it first: the columns have changed.
+- The old single "Registrations" tab is no longer used. Entries now go to **Boys** and **Girls**.
 - Until `SCRIPT_URL` is set, the form runs in **demo mode**: it shows the success screen but saves nothing.

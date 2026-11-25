@@ -5,15 +5,20 @@
  * Deploy → New deployment → Web app (Execute as: Me, Who has access: Anyone).
  * Copy the Web app URL into config.js (SCRIPT_URL).
  *
- * Every registration becomes one row in the "Registrations" tab.
- * File → Download → Microsoft Excel (.xlsx) gives you the Excel file any time.
+ * Boys and girls go to separate tabs: "Boys" and "Girls".
+ * Run setup() once from the editor to create both tabs with headers.
+ * File → Download → Microsoft Excel (.xlsx) gives you the Excel file (both tabs) any time.
  * Player photos are saved in a Google Drive folder ("CCL 2027 Player Photos");
  * the sheet stores a link to each one.
  * The page's live ticker reads registered names from doGet (?action=list).
  */
 
-var SHEET_NAME = "Registrations";
-var ID_PREFIX = "CCL27-";
+// category sent by the form → [tab name, ID prefix]
+var CATEGORIES = {
+  Boys: ["Boys", "CCL27-B-"],
+  Girls: ["Girls", "CCL27-G-"]
+};
+var CONTACT = "Rohit Jethale – 93733 13346";
 var PHOTO_FOLDER = "CCL 2027 Player Photos";
 var TICKER_MAX = 150; // newest N names sent to the ticker
 
@@ -24,7 +29,6 @@ var COLUMNS = [
   ["Full Name", "name"],
   ["WhatsApp", "mobile"],
   ["Email", "email"],
-  ["Gender", "gender"],
   ["Playing / Non-playing", "playing"],
   ["Available for Practice", "practice"],
   ["Role", "role"],
@@ -47,27 +51,24 @@ function doPost(e) {
   try {
     lock.waitLock(20000);
     var d = JSON.parse(e.postData.contents || "{}");
-    if (d.website) return json({ ok: true, id: ID_PREFIX + "0000" }); // honeypot: bots
+    if (d.website) return json({ ok: true, id: "CCL27-0000" }); // honeypot: bots
 
     var err = validate(d);
     if (err) return json({ ok: false, error: err });
 
-    var sheet = getSheet();
+    var cat = CATEGORIES[d.category];
+    var sheet = getSheet(cat[0]);
     var mobile = clean(d.mobile);
 
-    // one registration per WhatsApp number
-    var last = sheet.getLastRow();
-    if (last > 1) {
-      var mobiles = sheet.getRange(2, col("mobile"), last - 1, 1).getDisplayValues();
-      for (var i = 0; i < mobiles.length; i++) {
-        if (String(mobiles[i][0]).replace(/\D/g, "").slice(-10) === mobile) {
-          var existing = sheet.getRange(i + 2, 1).getDisplayValue();
-          return json({ ok: false, error: "This WhatsApp number is already registered (ID " + existing + "). Contact the organisers to change details." });
-        }
+    // one registration per WhatsApp number, across both tabs
+    for (var k in CATEGORIES) {
+      var found = findMobile(getSheet(CATEGORIES[k][0]), mobile);
+      if (found) {
+        return json({ ok: false, error: "This WhatsApp number is already registered (ID " + found + "). To change details, contact " + CONTACT + "." });
       }
     }
 
-    var id = ID_PREFIX + ("000" + last).slice(-4); // row 2 → 0001
+    var id = cat[1] + ("000" + nextNumber(sheet, cat[1])).slice(-4);
     d._id = id;
     d._ts = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd-MMM-yyyy HH:mm:ss");
     d._photo = savePhoto(d.photo, id, clean(d.name));
@@ -97,19 +98,24 @@ function doGet(e) {
     var cache = CacheService.getScriptCache();
     var hit = cache.get("list");
     if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
-    var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-    var players = [], count = 0;
-    if (sh && sh.getLastRow() > 1) {
-      var rows = sh.getRange(2, 1, sh.getLastRow() - 1, COLUMNS.length).getDisplayValues();
-      count = rows.length;
-      for (var i = rows.length - 1; i >= 0 && players.length < TICKER_MAX; i--) {
-        players.push({
-          n: String(rows[i][col("name") - 1]).replace(/^'/, ""),
-          j: rows[i][col("jerseyNo") - 1],
-          r: rows[i][col("role") - 1],
-          p: rows[i][col("playing") - 1]
-        });
+    // both tabs together, newest first (Submitted At is dd-MMM-yyyy HH:mm:ss in IST)
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var all = [];
+    for (var k in CATEGORIES) {
+      var sh = ss.getSheetByName(CATEGORIES[k][0]);
+      if (sh && sh.getLastRow() > 1) {
+        all = all.concat(sh.getRange(2, 1, sh.getLastRow() - 1, COLUMNS.length).getDisplayValues());
       }
+    }
+    all.sort(function (a, b) { return stamp(a[col("_ts") - 1]) - stamp(b[col("_ts") - 1]); });
+    var count = all.length, players = [];
+    for (var i = all.length - 1; i >= 0 && players.length < TICKER_MAX; i--) {
+      players.push({
+        n: String(all[i][col("name") - 1]).replace(/^'/, ""),
+        j: all[i][col("jerseyNo") - 1],
+        r: all[i][col("role") - 1],
+        p: all[i][col("playing") - 1]
+      });
     }
     var out = JSON.stringify({ ok: true, count: count, players: players });
     cache.put("list", out, 20); // seconds: keeps many open pages from hammering the sheet
@@ -134,25 +140,67 @@ function savePhoto(dataUrl, id, name) {
   }
 }
 
+// Run once from the Apps Script editor (select "setup" → Run) to create both tabs.
+function setup() {
+  for (var k in CATEGORIES) getSheet(CATEGORIES[k][0]);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var blank = ss.getSheetByName("Sheet1");
+  if (blank && blank.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(blank);
+}
+
 function validate(d) {
+  if (!CATEGORIES[d.category]) return "Please open the Boys or Girls registration link";
   if (!clean(d.name)) return "Name is required";
   if (!/^[6-9]\d{9}$/.test(clean(d.mobile))) return "Invalid mobile number";
-  var req = ["gender", "playing", "practice", "jerseyName", "jerseyNo", "tshirt"];
+  var req = ["playing", "practice", "jerseyName", "jerseyNo", "tshirt"];
   if (d.playing === "Playing") req.push("role", "batHand");
   for (var i = 0; i < req.length; i++) if (!clean(d[req[i]])) return "Missing: " + req[i];
   if (d.agree !== "Yes") return "Please accept the declaration";
   return "";
 }
 
-function getSheet() {
+function getSheet(name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  var sh = ss.getSheetByName(name) || ss.insertSheet(name);
   if (sh.getLastRow() === 0) {
     sh.appendRow(COLUMNS.map(function (c) { return c[0]; }));
     sh.getRange(1, 1, 1, COLUMNS.length).setFontWeight("bold").setBackground("#142c6e").setFontColor("#ffffff");
     sh.setFrozenRows(1);
   }
   return sh;
+}
+
+// returns the Reg ID already using this mobile, or ""
+function findMobile(sheet, mobile) {
+  var last = sheet.getLastRow();
+  if (last < 2) return "";
+  var mobiles = sheet.getRange(2, col("mobile"), last - 1, 1).getDisplayValues();
+  for (var i = 0; i < mobiles.length; i++) {
+    if (String(mobiles[i][0]).replace(/\D/g, "").slice(-10) === mobile) {
+      return sheet.getRange(i + 2, 1).getDisplayValue();
+    }
+  }
+  return "";
+}
+
+// highest existing number + 1, so deleting test rows restarts numbering cleanly
+function nextNumber(sheet, prefix) {
+  var last = sheet.getLastRow(), max = 0;
+  if (last >= 2) {
+    sheet.getRange(2, 1, last - 1, 1).getDisplayValues().forEach(function (r) {
+      var s = String(r[0]);
+      if (s.indexOf(prefix) === 0) max = Math.max(max, parseInt(s.slice(prefix.length), 10) || 0);
+    });
+  }
+  return max + 1;
+}
+
+// "25-Nov-2026 14:05:09" → sortable number (0 if unreadable)
+function stamp(s) {
+  var m = /^(\d{2})-(\w{3})-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/.exec(String(s));
+  if (!m) return 0;
+  var mon = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(m[2]) / 3;
+  return new Date(+m[3], mon, +m[1], +m[4], +m[5], +m[6]).getTime();
 }
 
 // trims, caps length, and blocks spreadsheet formula injection (=, +, -, @)
