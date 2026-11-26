@@ -102,6 +102,7 @@
   var gate = document.getElementById("gate");
   function openSite(withMusic) {
     if (withMusic) startMusic();
+    blast();
     document.documentElement.classList.remove("gated");
     gate.classList.add("leaving");
     setTimeout(function () { gate.remove(); }, 600);
@@ -113,31 +114,95 @@
     document.getElementById("gateQuiet").addEventListener("click", function () { openSite(false); });
     gate.addEventListener("keydown", function (e) { if (e.key === "Escape") openSite(false); });
   }
+  /* ---------- blast: white flash, the CCL logo pops in, confetti bursts out ---------- */
+  function blast() {
+    var el = document.getElementById("blast");
+    if (!el || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    el.hidden = false;
+    void el.offsetWidth; // restart CSS animations
+    el.classList.add("go");
+    confetti(document.getElementById("blastFx"));
+    setTimeout(function () { el.classList.add("out"); }, 1900);
+    setTimeout(function () { el.remove(); }, 2400);
+  }
+  function confetti(cv) {
+    if (!cv || !cv.getContext) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1), W = innerWidth, H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    var g = cv.getContext("2d"); g.scale(dpr, dpr);
+    var COLS = ["#9b2a8f", "#4a7bc1", "#1a9a3a", "#f2c81b", "#ee7a22", "#e02424", "#b8e01c", "#2bb3ff", "#ffffff", "#ffd34d"];
+    var bits = [], cx = W / 2, cy = H / 2, n = W < 500 ? 140 : 220;
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 11;
+      bits.push({ x: cx, y: cy, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 3, s: 4 + Math.random() * 6,
+        r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: COLS[i % COLS.length], spark: i % 4 === 0 });
+    }
+    var start = performance.now();
+    (function frame(t) {
+      var k = (t - start) / 1000;
+      g.clearRect(0, 0, W, H);
+      bits.forEach(function (b) {
+        b.vx *= .985; b.vy = b.vy * .985 + .22; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        g.globalAlpha = Math.max(0, 1 - k / 2.2);
+        g.fillStyle = b.c;
+        if (b.spark) { g.beginPath(); g.arc(b.x, b.y, b.s / 2.4, 0, 6.3); g.fill(); }
+        else { g.save(); g.translate(b.x, b.y); g.rotate(b.r); g.fillRect(-b.s / 2, -b.s / 4, b.s, b.s / 2); g.restore(); }
+      });
+      if (k < 2.3) requestAnimationFrame(frame);
+    })(start);
+  }
+
   audio.addEventListener("play", function () { musicUI(true); });
   audio.addEventListener("pause", function () { musicUI(false); });
 
   /* ---------- live ticker of registered players ---------- */
   var run = document.getElementById("tickerRun");
-  var rail = document.getElementById("rail"), railRun = document.getElementById("railRun");
+  var board = document.getElementById("board"), boardBanner = document.getElementById("boardBanner");
+  var TOTAL_JERSEYS = +CFG.TOTAL_JERSEYS || 0; // 0 = no limit set
+  var shownKits = null;                        // names already on the board (new ones swing in)
   // "Rahul Patil" -> "Rahul P" (fits under a jersey)
   function shortName(n) {
     var w = String(n || "").trim().split(/\s+/);
     return w.length > 1 ? w[0] + " " + w[w.length - 1].charAt(0).toUpperCase() : w[0];
   }
-  function renderRail(list) {
-    if (!list.length) { rail.hidden = true; return; }
-    var one = list.map(function (p) {
+  // every registered player's jersey on hangers; newest first, new arrivals swing in
+  function renderBoard(list, realCount) {
+    var first = shownKits === null, seen = {};
+    var html = list.map(function (p) {
+      var key = (p.n || "").toLowerCase() + "|" + p.j;
+      seen[key] = 1;
+      var isNew = !first && !shownKits[key];
       var no = String(p.j == null ? "" : p.j).trim();
-      return "<figure class=\"kit\"><svg viewBox=\"0 0 100 118\"><use href=\"#jersey\"/></svg>" +
+      return "<figure class=\"kit" + (isNew ? " new" : "") + "\"><svg viewBox=\"0 -18 100 118\"><use href=\"#jersey\"/></svg>" +
         "<span class=\"kit-no\">" + esc(no) + "</span><figcaption>" + esc(shortName(p.n)) + "</figcaption></figure>";
-    }).join("");
-    // repeat short lists so the rail is always wider than the screen, then double it for a seamless loop
-    var reps = Math.max(1, Math.ceil(16 / list.length));
-    var block = new Array(reps + 1).join(one);
-    railRun.innerHTML = "<div>" + block + "</div><div aria-hidden=\"true\">" + block + "</div>";
-    rail.hidden = false;
-    railRun.style.animationDuration = Math.max(20, railRun.firstChild.scrollWidth / 45) + "s";
+    });
+    var left = TOTAL_JERSEYS ? Math.max(0, TOTAL_JERSEYS - realCount) : 0;
+    // empty hangers for the jerseys still available (capped so the board stays light)
+    for (var i = 0; i < Math.min(left, 30); i++) {
+      html.push("<figure class=\"kit ghost\"><svg viewBox=\"0 -18 100 118\"><use href=\"#jerseyGhost\"/></svg><figcaption>Aapki?</figcaption></figure>");
+    }
+    board.innerHTML = html.join("");
+    shownKits = seen;
+    var msg;
+    if (TOTAL_JERSEYS && left === 0) msg = "Sab jerseys book ho gayi! 🏆";
+    else if (TOTAL_JERSEYS) msg = "Sirf " + left + " jersey bachi! Jaldi kijiye 🔥";
+    else if (realCount) msg = realCount + (realCount === 1 ? " jersey" : " jerseys") + " taken! Aapki kab? Jaldi kijiye 🔥";
+    else msg = "Jerseys bharne lagi hain! Aapki kab? Jaldi kijiye 🔥";
+    boardBanner.textContent = msg;
   }
+
+  // Team owners band
+  (function owners() {
+    var list = (CFG.TEAM_OWNERS || []).map(function (x) { return String(x || "").trim(); }).filter(Boolean);
+    var items = list.length ? list.map(function (n) { return "<span>" + esc(n) + "</span>"; })
+      : ["<span>Announcing soon</span>", "<span>Majestique Colours Cricket League 2027</span>", "<span>6th &amp; 7th Feb 2027</span>"];
+    while (items.length < 6) items = items.concat(items);
+    var one = items.join("<em>★</em>") + "<em>★</em>";
+    var ownersRun = document.getElementById("ownersRun");
+    ownersRun.innerHTML = "<div>" + one + "</div><div aria-hidden=\"true\">" + one + "</div>";
+    ownersRun.style.animationDuration = Math.max(18, ownersRun.firstChild.scrollWidth / 60) + "s";
+  })();
+
   var countEl = document.getElementById("regCount");
   var players = [];          // [{n: name, j: jersey no, r: role, p: Playing/Non-playing}]
   var SAMPLES = (CFG.SAMPLE_PLAYERS || []).map(function (x) { return { n: x.name, j: x.no, r: x.role, p: x.playing }; });
@@ -146,7 +211,6 @@
   var mine = [];             // registered from this page, shown before the server catches up
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  var ROLE_ICO = { "Batter": "🏏", "Bowler": "🎯", "All-rounder": "⚡", "Wicket-keeper": "🧤" };
 
   function renderTicker() {
     var seen = {}, list = [];
@@ -165,22 +229,21 @@
     if ((SP.NAME || "").trim()) items.push("Title sponsor · " + SP.NAME.trim());
     if (n) items.push(n + (n === 1 ? " player" : " players") + " registered");
     else items.push("Registrations open");
-    var html = items.map(function (t) { return "<span class=\"tk-msg\">" + esc(t) + "</span>"; });
+    var html = items.map(function (t) { return "<span>" + esc(t) + "</span>"; });
     if (list.length) {
-      html.push("<span class=\"tk-msg\">Welcome to the auction pool</span>");
+      html.push("<span>Welcome to the auction pool</span>");
       list.forEach(function (p) {
-        var ico = p.p === "Non-playing" ? "🙌" : (ROLE_ICO[p.r] || "🏏");
         var tag = p.p === "Non-playing" ? "Non-playing" : (p.r || "");
         var no = String(p.j == null ? "" : p.j).trim();
-        html.push("<span class=\"tk-name\">" + ico + " " + esc(p.n) + (no ? " <b class=\"tk-no\">#" + esc(no) + "</b>" : "") + (tag ? " <small>" + esc(tag) + "</small>" : "") + "</span>");
+        html.push("<span>" + esc(p.n) + (no ? " · <b>#" + esc(no) + "</b>" : "") + (tag ? " · <small>" + esc(tag) + "</small>" : "") + " · IN <i class=\"ok\">✓</i></span>");
       });
     }
-    renderRail(list);
+    renderBoard(list, n);
     var one = html.join("<em>●</em>") + "<em>●</em>";
     run.innerHTML = "<div>" + one + "</div><div aria-hidden=\"true\">" + one + "</div>";
     // constant speed (~70px/s) however long the list gets
     var w = run.firstChild.scrollWidth;
-    run.style.animationDuration = Math.max(20, w / 70) + "s";
+    run.style.animationDuration = Math.max(20, w / 65) + "s";
     if (n) {
       countEl.textContent = n + (n === 1 ? " Player" : " Players");
       document.getElementById("regCountSub").textContent = "registered so far";

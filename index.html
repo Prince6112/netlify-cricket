@@ -9,7 +9,7 @@
 <meta property="og:description" content="6th & 7th Feb 2027 · Register for the player auction">
 <meta property="og:image" content="assets/og.jpg">
 <meta name="theme-color" content="#1b3a8f">
-<link rel="icon" href="assets/icon.png">
+<link rel="icon" href="assets/icon-v2.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
 <body>
 <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
   <div class="gate-in">
-    <img class="gate-colours" src="assets/colours-logo.webp" alt="Colours presents" width="150" height="98">
+    <img class="gate-colours" src="assets/colours-logo-dark.webp" alt="Colours presents" width="420" height="263">
     <img class="gate-badge" src="assets/majestic-ccl-2027-light.webp" alt="" width="420" height="517">
     <h2 id="gateTitle">CCL 2027 · <span>LIVE</span></h2>
     <p class="gate-tag">Ab khela hoga… aapki entry.</p>
@@ -27,13 +27,9 @@
   </div>
 </div>
 <div class="rainbow" aria-hidden="true"></div>
-<div class="ticker" aria-label="Registered players">
-  <span class="ticker-tag">LIVE</span>
-  <div class="ticker-track"><div class="ticker-run" id="tickerRun"></div></div>
-  <button type="button" class="music" id="musicBtn" aria-pressed="false" aria-label="Play music">
-    <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Music</span>
-  </button>
-</div>
+<button type="button" class="music" id="musicBtn" aria-pressed="false" aria-label="Play music">
+  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span id="musicLbl">Music</span>
+</button>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a5fd6"/><stop offset="1" stop-color="#142c6e"/></linearGradient>
@@ -47,12 +43,17 @@
     <path d="M41 9 Q50 17 59 9 L56 8 Q50 13 44 8 Z" fill="#b8e01c"/>
     <rect x="27" y="86" width="46" height="5" fill="url(#gStripe)"/>
   </symbol>
+  <symbol id="jerseyGhost" viewBox="0 -18 100 118">
+    <path d="M50 -16 q7 0 7 6 q0 5 -7 7 v5" fill="none" stroke="#6f7a92" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M50 2 L22 15 M50 2 L78 15" fill="none" stroke="#6f7a92" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M30 13 L41 9 Q50 17 59 9 L70 13 L92 27 L84 44 L74 38 L74 96 L26 96 L26 38 L16 44 L8 27 Z" fill="rgba(255,255,255,.04)" stroke="#5d6984" stroke-width="1.6" stroke-dasharray="4 3"/>
+  </symbol>
 </svg>
 
 <header class="hero">
   <div class="wrap">
     <div class="presents">
-      <img src="assets/colours-logo.webp" alt="Colours — Colour your Dreams" width="150" height="98">
+      <img src="assets/colours-logo-v2.webp" alt="Colours — Colour your Dreams" width="480" height="302">
       <span>presents</span>
     </div>
     <img class="badge" src="assets/majestic-ccl-2027.webp" alt="Majestic CCL 2027 logo" width="260" height="320">
@@ -84,9 +85,20 @@
 </header>
 <audio id="anthem" src="assets/anthem.mp3" loop preload="none"></audio>
 
-<div class="rail" id="rail" aria-label="Jerseys of registered players" hidden>
-  <div class="rail-run" id="railRun"></div>
-</div>
+<section class="arena" aria-label="Team owners and registered players">
+  <div class="band band-owners">
+    <span class="band-tag">Team Owners :</span>
+    <div class="band-track"><div class="band-run" id="ownersRun"></div></div>
+  </div>
+  <div class="band band-live">
+    <span class="band-tag live">LIVE</span>
+    <div class="band-track"><div class="band-run" id="tickerRun"></div></div>
+  </div>
+  <div class="wrap board-wrap">
+    <p class="board-banner" id="boardBanner">Jerseys bharne lagi hain! Aapki kab? Jaldi kijiye 🔥</p>
+    <div class="board" id="board" aria-label="Jerseys of registered players"></div>
+  </div>
+</section>
 
 <main id="register" class="wrap">
   <section class="card choose" id="chooseCard">
@@ -347,6 +359,14 @@
     <p class="tags">#MajestiqueCCL2027 #ColoursCricketLeague #CricketKaJunoon</p>
   </div>
 </footer>
+
+<div class="blast" id="blast" aria-hidden="true" hidden>
+  <canvas id="blastFx"></canvas>
+  <div class="blast-ring"></div>
+  <p class="blast-word">SWAGAT HAI!</p>
+  <img class="blast-logo" src="assets/majestic-ccl-2027-light.webp" alt="" width="420" height="517">
+  <div class="blast-flash"></div>
+</div>
 
 <script src="config.js"></script>
 <script src="app.js"></script>

@@ -13,7 +13,15 @@ window.CCL_CONFIG = {
     TAGLINE: ""
   },
 
-  // Sample players shown in the LIVE bar until real registrations come in.
+  // Team owners, shown in the gold "Team Owners" band. Until names are added it says "Announcing soon".
+  // Example: TEAM_OWNERS: ["Mr. Rohit Jethale", "Mr. Amit Shah"],
+  TEAM_OWNERS: [],
+
+  // Total jerseys available. When set (e.g. 99), the jersey board says "Sirf N jersey bachi!"
+  // and shows empty hangers for the jerseys still free. 0 = no limit, it counts jerseys taken instead.
+  TOTAL_JERSEYS: 0,
+
+  // Sample players shown in the LIVE band and on the jersey board until real registrations come in.
   // Real players always show first. Once HIDE_SAMPLES_AFTER real players have registered,
   // the samples disappear by themselves. To remove them sooner, delete the lines below.
   // playing: "Playing" or "Non-playing". role: Batter, Bowler, All-rounder or Wicket-keeper.
