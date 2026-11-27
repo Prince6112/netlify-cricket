@@ -18,7 +18,7 @@ var CATEGORIES = {
   Boys: ["Boys", "CCL27-B-"],
   Girls: ["Girls", "CCL27-G-"]
 };
-var CONTACT = "Rohit Jethale – 93733 13346";
+var CONTACT = "Dr. Rohit Jethale (93733 13346), Gaurav Mundada (90284 78078) or Tushar Lohe (90281 85515)";
 var PHOTO_FOLDER = "CCL 2027 Player Photos";
 var TICKER_MAX = 150; // newest N names sent to the ticker
 
@@ -38,7 +38,8 @@ var COLUMNS = [
   ["T-shirt Size", "tshirt"],
   ["Photo", "_photo"],
   ["Comments", "comments"],
-  ["Declaration", "agree"]
+  ["Declaration", "agree"],
+  ["Sleeves", "sleeves"] // added later: kept last so rows saved before it stay in line
 ];
 
 function col(key) {
@@ -152,7 +153,7 @@ function validate(d) {
   if (!CATEGORIES[d.category]) return "Please open the Boys or Girls registration link";
   if (!clean(d.name)) return "Name is required";
   if (!/^[6-9]\d{9}$/.test(clean(d.mobile))) return "Invalid mobile number";
-  var req = ["playing", "practice", "jerseyName", "jerseyNo", "tshirt"];
+  var req = ["playing", "practice", "jerseyName", "jerseyNo", "tshirt", "sleeves"];
   if (d.playing === "Playing") req.push("role", "batHand");
   for (var i = 0; i < req.length; i++) if (!clean(d[req[i]])) return "Missing: " + req[i];
   if (d.agree !== "Yes") return "Please accept the declaration";
@@ -166,6 +167,12 @@ function getSheet(name) {
     sh.appendRow(COLUMNS.map(function (c) { return c[0]; }));
     sh.getRange(1, 1, 1, COLUMNS.length).setFontWeight("bold").setBackground("#142c6e").setFontColor("#ffffff");
     sh.setFrozenRows(1);
+  } else if (sh.getLastColumn() < COLUMNS.length) {
+    // tab made before a column was added: add the missing headers at the end
+    var from = sh.getLastColumn() + 1;
+    sh.getRange(1, from, 1, COLUMNS.length - from + 1)
+      .setValues([COLUMNS.slice(from - 1).map(function (c) { return c[0]; })])
+      .setFontWeight("bold").setBackground("#142c6e").setFontColor("#ffffff");
   }
   return sh;
 }

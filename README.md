@@ -1,6 +1,6 @@
 # Majestique Colours Cricket League 2027 — Player Registration
 
-A mobile-friendly registration site for the player auction (6–7 Feb 2027), with **separate forms for boys and girls**.
+A mobile-friendly registration site for the player auction (5–7 Feb 2027), with **separate forms for boys and girls**.
 It needs no server of its own: Netlify hosts the page, and each registration becomes one row in a Google Sheet, which you can download as Excel any time.
 
 **Live site:** https://loquacious-starlight-5feb20.netlify.app
@@ -11,24 +11,27 @@ It needs no server of its own: Netlify hosts the page, and each registration bec
 | `/boys` | Boys' form (same as `/?for=boys`) |
 | `/girls` | Girls' form (same as `/?for=girls`) |
 
-Queries contact shown on the page: **Rohit Jethale, 93733 13346**.
+Queries contacts shown on the page: **Dr. Rohit Jethale, 93733 13346**, **Gaurav Mundada, 90284 78078** and **Tushar Lohe, 90281 85515**.
 
 ---
 
 ## Status (27 Nov 2026)
 
 ### Done and live
-- **Logos:** new Majestic CCL 2027 logo (white-lettered version on the dark welcome screen). Colours logo without its white background, with a separate version for dark backgrounds.
-- **Welcome screen + blast:** "Chalo, khelein ♪" starts the music. After it, a white flash, then the CCL logo pops in with a confetti burst and "SWAGAT HAI!".
+- **Logos:** Majestique CCL 2027 logo (one transparent version, used on the welcome screen, blast, hero, jersey, icon and share image). Colours logo without its white background, with a separate version for dark backgrounds.
+- **Welcome screen + blast:** "Chalo, khelein ♪" starts the music. After it, a white flash, then the CCL logo pops in with a confetti burst and "SWAGAT HAI!". The logo stays about 5 seconds (a second confetti burst at 2.4 s); tapping closes it sooner.
 - **Separate Boys and Girls forms:** each saves to its own tab. Choosing one switches the form in place, without showing the welcome screen again.
 - **Size chart:** Indian sizes S–3XL, chest and length in inches, with a measuring diagram and a "How do I pick my size?" note.
-- **Live jersey preview:** front and back, showing the typed name and number.
-- **Contact:** "For any queries" block with Call and WhatsApp buttons.
+- **Live jersey preview:** front and back, showing the typed name and number. The front carries the CCL logo and the chest sponsor: gold Majestique monogram, "MAJESTIQUE", "KCM", "Kothrud Central Mall", "ELITE COMMERCIAL SPACES". The sleeves follow the Half/Full choice.
+- **Sleeves:** required Half / Full choice next to the T-shirt size, saved in a "Sleeves" column (last column of each tab).
+- **Contact:** "For any queries" block with Call and WhatsApp buttons for Dr. Rohit Jethale, Gaurav Mundada and Tushar Lohe.
 - **Bands:** gold "Team Owners" band and "LIVE" players band, scrolling across, below the hero.
 - **Jersey board:** rows of hangers with every player's jersey, newest first; new ones swing in.
 - **Google Sheet connected:** `SCRIPT_URL` is set, so registrations are saved for real. Tested on 27 Nov: Boys and Girls entries saved to the right tabs, a repeat WhatsApp number is refused, and the player list feeds the bands and board.
 
 ### To do
+- [ ] **Publish the 27 Nov changes** (new logo everywhere, 5–7 Feb dates, longer logo blast, jersey chest sponsor, half/full sleeves, three contacts): they are on `Prince6112/cricket-form`, branch `claude/kind-babbage-8rppb4`, and still need copying to `main` of `Prince6112/netlify-cricket` to go live.
+- [ ] **Redeploy the Apps Script** with the new `Code.gs` (Deploy → Manage deployments → ✏️ Edit → Version: New version). Until then the sleeves choice is not saved. The first registration after it adds the "Sleeves" header to each tab by itself.
 - [ ] **Real test from a phone**, including a photo. Check the row appears and the jersey shows on the board within about 30 s. Only direct requests to the script were tested so far, not the page itself against Google.
 - [ ] **Share the sheet with Rohit** (Viewer) for his trial run, together with the site links.
 - [ ] **Delete test data before launch:** the rows "TEST Boy (delete me)" (`CCL27-B-0001`) and "TEST Girl (delete me)" (`CCL27-G-0001`), plus any of Rohit's trial rows and their photos in the Drive folder "CCL 2027 Player Photos". Numbering restarts at 0001.
@@ -37,7 +40,6 @@ Queries contact shown on the page: **Rohit Jethale, 93733 13346**.
 - [ ] **Sample players:** they show until 10 real players register. Remove `SAMPLE_PLAYERS` from `config.js` sooner if Rohit prefers.
 
 ### Open questions for Rohit
-- The logo says **MAJESTIC**, but the page heading, title sponsor ("Majestique Landmarks") and promo video say **MAJESTIQUE**. Which spelling should be used everywhere?
 - The blast word is "SWAGAT HAI!" (the reference video used "PADHARO!"). Keep it or change it?
 
 ---
@@ -85,11 +87,11 @@ The web app is deployed with **Execute as: Me** (it runs as the sheet owner's Go
 | `_redirects` | Short links `/boys` and `/girls` |
 | `netlify.toml` | Netlify headers and caching |
 | `apps-script/Code.gs` | The Google Sheet script (copy of what's pasted into the sheet's Apps Script) |
-| `assets/majestic-ccl-2027.webp` | CCL logo (light background) |
-| `assets/majestic-ccl-2027-light.webp` | CCL logo with white lettering (welcome screen and blast) |
+| `assets/majestique-ccl-2027.webp` | Majestique CCL 2027 logo, transparent (welcome screen, blast, hero, jersey front) |
+| `assets/majestique-monogram.webp` | Gold Majestique monogram on the jersey chest |
 | `assets/colours-logo-v2.webp` | Colours logo, transparent (hero) |
 | `assets/colours-logo-dark.webp` | Colours logo for dark backgrounds (welcome screen) |
-| `assets/icon-v2.png`, `assets/og.jpg` | Browser icon, WhatsApp/social share image |
+| `assets/icon-v3.png`, `assets/og-v2.jpg` | Browser icon, WhatsApp/social share image |
 | `assets/anthem.mp3` | Background music (soundtrack of the CCL 2027 promo video) |
 
 ## Google Sheet setup (already done; for a new sheet)

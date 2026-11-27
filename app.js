@@ -53,7 +53,7 @@
   /* ---------- countdown ---------- */
   var cd = document.getElementById("countdown");
   function tick() {
-    var ms = new Date(CFG.EVENT_START || "2027-02-06T08:00:00+05:30") - Date.now();
+    var ms = new Date(CFG.EVENT_START || "2027-02-05T08:00:00+05:30") - Date.now();
     if (ms <= 0) { cd.innerHTML = "<b>Match day is here!</b> 🏏"; return; }
     var d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24;
     cd.innerHTML = d > 0 ? "<b>" + d + " days</b> to go" : "<b>" + h + " hours</b> to go";
@@ -122,8 +122,16 @@
     void el.offsetWidth; // restart CSS animations
     el.classList.add("go");
     confetti(document.getElementById("blastFx"));
-    setTimeout(function () { el.classList.add("out"); }, 1900);
-    setTimeout(function () { el.remove(); }, 2400);
+    // the logo stays on screen for about 5 seconds; a tap closes it sooner
+    var t1 = setTimeout(function () { confetti(document.getElementById("blastFx")); }, 2400);
+    var t2 = setTimeout(close, 5200);
+    function close() {
+      clearTimeout(t1); clearTimeout(t2);
+      if (el.classList.contains("out")) return;
+      el.classList.add("out");
+      setTimeout(function () { el.remove(); }, 500);
+    }
+    el.addEventListener("click", close);
   }
   function confetti(cv) {
     if (!cv || !cv.getContext) return;
@@ -195,7 +203,7 @@
   (function owners() {
     var list = (CFG.TEAM_OWNERS || []).map(function (x) { return String(x || "").trim(); }).filter(Boolean);
     var items = list.length ? list.map(function (n) { return "<span>" + esc(n) + "</span>"; })
-      : ["<span>Announcing soon</span>", "<span>Majestique Colours Cricket League 2027</span>", "<span>6th &amp; 7th Feb 2027</span>"];
+      : ["<span>Announcing soon</span>", "<span>Majestique Colours Cricket League 2027</span>", "<span>5th, 6th &amp; 7th Feb 2027</span>"];
     while (items.length < 6) items = items.concat(items);
     var one = items.join("<em>★</em>") + "<em>★</em>";
     var ownersRun = document.getElementById("ownersRun");
@@ -225,7 +233,7 @@
         if (k && !seen[k]) { seen[k] = 1; list.push(p); }
       });
     }
-    var items = ["Majestique Colours Cricket League 2027", "6th & 7th Feb 2027 · Player auction"];
+    var items = ["Majestique Colours Cricket League 2027", "5th, 6th & 7th Feb 2027 · Player auction"];
     if ((SP.NAME || "").trim()) items.push("Title sponsor · " + SP.NAME.trim());
     if (n) items.push(n + (n === 1 ? " player" : " players") + " registered");
     else items.push("Registrations open");
@@ -271,6 +279,7 @@
 
   /* ---------- jersey preview ---------- */
   var pvName = document.getElementById("pvName"), pvNo = document.getElementById("pvNo");
+  var pvKit = document.querySelector(".pv-kit");
   // shrink long names so they always fit across the back of the shirt
   function fit(el, max) {
     el.removeAttribute("textLength"); el.removeAttribute("lengthAdjust");
@@ -284,6 +293,7 @@
     pvName.textContent = (form.jerseyName.value.trim() || "YOUR NAME").toUpperCase();
     pvNo.textContent = form.jerseyNo.value.trim() || "00";
     fit(pvName, 104);
+    pvKit.classList.toggle("full", val("sleeves") === "Full");
   }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { preview(); });
 
@@ -368,6 +378,7 @@
     jerseyName: function (v) { return v.length >= 1 || "Enter the name for your jersey"; },
     jerseyNo: function (v) { return /^\d{1,2}$/.test(v) || "Enter a number from 0 to 99"; },
     tshirt: function (v) { return !!v || "Please pick your T-shirt size (see the size chart below)"; },
+    sleeves: function (v) { return !!v || "Please pick half or full sleeves"; },
     agree: function (v) { return v === "Yes" || "Please accept the declaration"; }
   };
 
@@ -415,7 +426,7 @@
   });
 
   /* ---------- draft (so a refresh doesn't lose typing; the photo is not kept) ---------- */
-  var FIELDS = ["name", "mobile", "email", "playing", "practice", "role", "batHand", "jerseyName", "jerseyNo", "tshirt", "comments"];
+  var FIELDS = ["name", "mobile", "email", "playing", "practice", "role", "batHand", "jerseyName", "jerseyNo", "tshirt", "sleeves", "comments"];
   function saveDraft() {
     var d = {}; FIELDS.forEach(function (f) { d[f] = val(f); });
     try { localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); } catch (e) {}
@@ -437,7 +448,7 @@
   preview(); syncPlaying(); markSize();
   formReady = true;
   form.addEventListener("input", function () { preview(); saveDraft(); });
-  form.addEventListener("change", saveDraft);
+  form.addEventListener("change", function () { preview(); saveDraft(); });
 
   /* ---------- submit ---------- */
   function showError(msg) { errBox.textContent = msg; errBox.hidden = !msg; }
