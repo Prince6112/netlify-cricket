@@ -2,7 +2,7 @@
 // While this is empty the form runs in DEMO mode: nothing is saved anywhere,
 // and the live ticker shows only the league messages (no player names).
 window.CCL_CONFIG = {
-  SCRIPT_URL: "",
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbw8ru0Y_sWUyWXQMeq8lDnlrxrXZGgGGI1RnPNPDH3_-JjyFW_F9GaSsueOM2PJt09D/exec",
   EVENT_START: "2027-02-06T08:00:00+05:30",
 
   // Title sponsor. Leave name empty to show "To be announced".
