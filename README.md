@@ -30,7 +30,7 @@ Queries contacts shown on the page: **Dr. Rohit Jethale, 93733 13346**, **Gaurav
 - **Google Sheet connected:** `SCRIPT_URL` is set, so registrations are saved for real. Tested on 27 Nov: Boys and Girls entries saved to the right tabs, a repeat WhatsApp number is refused, and the player list feeds the bands and board.
 
 ### To do
-- [ ] **Publish the 27 Nov changes** (new logo everywhere, 5–7 Feb dates, longer logo blast, jersey chest sponsor, half/full sleeves, three contacts): they are on `Prince6112/cricket-form`, branch `claude/kind-babbage-8rppb4`, and still need copying to `main` of `Prince6112/netlify-cricket` to go live.
+- [x] **Published the 27 Nov changes** (new logo everywhere, 5–7 Feb dates, longer logo blast, jersey chest sponsor, half/full sleeves, three contacts) to the live site.
 - [ ] **Redeploy the Apps Script** with the new `Code.gs` (Deploy → Manage deployments → ✏️ Edit → Version: New version). Until then the sleeves choice is not saved. The first registration after it adds the "Sleeves" header to each tab by itself.
 - [ ] **Real test from a phone**, including a photo. Check the row appears and the jersey shows on the board within about 30 s. Only direct requests to the script were tested so far, not the page itself against Google.
 - [ ] **Share the sheet with Rohit** (Viewer) for his trial run, together with the site links.
