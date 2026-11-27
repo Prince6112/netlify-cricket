@@ -31,7 +31,7 @@ Queries contacts shown on the page: **Dr. Rohit Jethale, 93733 13346**, **Gaurav
 
 ### To do
 - [x] **Published the 27 Nov changes** (new logo everywhere, 5–7 Feb dates, longer logo blast, jersey chest sponsor, half/full sleeves, three contacts) to the live site.
-- [ ] **Redeploy the Apps Script** with the new `Code.gs` (Deploy → Manage deployments → ✏️ Edit → Version: New version). Until then the sleeves choice is not saved. The first registration after it adds the "Sleeves" header to each tab by itself.
+- [x] **Apps Script redeployed** with the sleeves version (27 Nov). The first real registration adds the "Sleeves" header to each tab by itself.
 - [ ] **Real test from a phone**, including a photo. Check the row appears and the jersey shows on the board within about 30 s. Only direct requests to the script were tested so far, not the page itself against Google.
 - [ ] **Share the sheet with Rohit** (Viewer) for his trial run, together with the site links.
 - [ ] **Delete test data before launch:** the rows "TEST Boy (delete me)" (`CCL27-B-0001`) and "TEST Girl (delete me)" (`CCL27-G-0001`), plus any of Rohit's trial rows and their photos in the Drive folder "CCL 2027 Player Photos". Numbering restarts at 0001.
